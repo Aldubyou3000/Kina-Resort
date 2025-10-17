@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smooth Scroll Example</title>
+    <style>
+      /* Basic resets and setup */
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden; /* Prevent native scroll */
+        height: 100%;
+      }
+
+      /* The scrollable content wrapper */
+      #scroll-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        will-change: transform; /* Optimize for performance */
+      }
+
+      /* Example sections for content */
+      section {
+        height: 100vh; /* Full viewport height for demo */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: white;
+      }
+
+      #section1 {
+        background: #3498db;
+      }
+      #section2 {
+        background: #e74c3c;
+      }
+      #section3 {
+        background: #2ecc71;
+      }
+
+      /* Parallax elements (e.g., background images or layers) */
+      .parallax-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        will-change: transform;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="scroll-container">
+      <section id="section1">
+        <div
+          class="parallax-bg"
+          style="background-image: url('bg1.jpg')"
+          data-speed="0.5"
+        ></div>
+        Section 1
+      </section>
+      <section id="section2">
+        <div
+          class="parallax-bg"
+          style="background-image: url('bg2.jpg')"
+          data-speed="0.3"
+        ></div>
+        Section 2
+      </section>
+      <section id="section3">
+        <div
+          class="parallax-bg"
+          style="background-image: url('bg3.jpg')"
+          data-speed="0.7"
+        ></div>
+        Section 3
+      </section>
+    </div>
+    <script>
+      const scrollContainer = document.getElementById("scroll-container");
+      const body = document.body;
+
+      // Variables for scroll state
+      let currentScroll = 0; // Current scroll position
+      let targetScroll = 0; // Target scroll position
+      let ease = 0.1; // Easing factor (lower = smoother/slower inertia)
+      let isScrolling = false;
+
+      // Get total height of content
+      function updateBodyHeight() {
+        body.style.height = `${scrollContainer.offsetHeight}px`;
+      }
+
+      // Lerp function for smooth interpolation
+      function lerp(start, end, factor) {
+        return start + (end - start) * factor;
+      }
+
+      // Main animation loop using requestAnimationFrame
+      function smoothScroll() {
+        currentScroll = lerp(currentScroll, targetScroll, ease);
+        scrollContainer.style.transform = `translate3d(0, -${currentScroll}px, 0)`;
+
+        // Update parallax elements
+        document.querySelectorAll(".parallax-bg").forEach((el) => {
+          const speed = parseFloat(el.getAttribute("data-speed"));
+          const offset = currentScroll * speed;
+          el.style.transform = `translate3d(0, ${offset}px, 0)`;
+        });
+
+        requestAnimationFrame(smoothScroll);
+      }
+
+      // Handle wheel events
+      window.addEventListener(
+        "wheel",
+        (e) => {
+          targetScroll += e.deltaY * 2; // Adjust sensitivity
+          targetScroll = Math.max(
+            0,
+            Math.min(
+              targetScroll,
+              scrollContainer.offsetHeight - window.innerHeight
+            )
+          );
+        },
+        { passive: false }
+      ); // Prevent default scroll
+
+      // Handle resize (recalculate heights)
+      window.addEventListener("resize", updateBodyHeight);
+
+      // Optional: Basic touch support for mobile
+      let touchStartY = 0;
+      window.addEventListener("touchstart", (e) => {
+        touchStartY = e.touches[0].clientY;
+      });
+      window.addEventListener(
+        "touchmove",
+        (e) => {
+          const deltaY = touchStartY - e.touches[0].clientY;
+          targetScroll += deltaY * 2;
+          targetScroll = Math.max(
+            0,
+            Math.min(
+              targetScroll,
+              scrollContainer.offsetHeight - window.innerHeight
+            )
+          );
+          touchStartY = e.touches[0].clientY;
+        },
+        { passive: false }
+      );
+
+      // Initialize
+      updateBodyHeight();
+      smoothScroll();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,227 @@
+// assets/js/app.js
+import { renderHeader } from './components/header.js';
+import { renderFooter } from './components/footer.js';
+import { showToast } from './components/toast.js';
+import { setBusy } from './components/loader.js';
+import { HomePage } from './pages/home.js';
+import { PackagesPage } from './pages/packages.js';
+import { RoomsPage } from './pages/rooms.js';
+import { AuthPage } from './pages/auth.js';
+import { BookingsPage } from './pages/bookings.js';
+import { AdminPage } from './pages/admin.js';
+import { WeatherPage } from './pages/weather.js';
+import { CheckoutPage } from './pages/checkout.js';
+import { getAuthState } from './utils/state.js';
+
+// Removed custom SmoothScroll implementation for better performance
+
+const routes = {
+  '/': HomePage,
+  '/packages': PackagesPage,
+  '/rooms': RoomsPage,
+  '/auth': AuthPage,
+  '/bookings': BookingsPage,
+  '/admin': AdminPage,
+  '/weather': WeatherPage,
+  '/checkout': CheckoutPage,
+  '/about': () => `<section class="container"><h2>About Kina Resort</h2><p>Experience tropical serenity with modern comfort.</p></section>`
+};
+
+function updateAdminVisibility(){
+  const { role } = getAuthState();
+  const adminLinks = document.querySelectorAll('.admin-only');
+  adminLinks.forEach(node => {
+    node.hidden = !(role === 'admin' || role === 'staff');
+  });
+}
+
+async function router(){
+  const path = location.hash.replace('#','') || '/';
+  
+  // Handle auth modal globally
+  if(path === '/auth'){
+    const authModalHTML = await AuthPage();
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = authModalHTML;
+    const authModal = tempDiv.firstElementChild;
+    document.body.appendChild(authModal);
+    return;
+  }
+  
+  const Page = routes[path] || (() => {
+    const section = document.createElement('section');
+    section.className = 'container';
+    section.innerHTML = '<h2>Not Found</h2>';
+    return section;
+  });
+  const main = document.getElementById('main');
+  setBusy(true);
+  try{
+    const out = await Page();
+    if(typeof out === 'string'){
+      main.innerHTML = out;
+    } else if(out instanceof Node){
+      main.innerHTML = '';
+      main.appendChild(out);
+    } else {
+      main.innerHTML = '';
+    }
+  }catch(err){
+    console.error(err);
+    showToast('Something went wrong loading this page.', 'error');
+    main.innerHTML = `<section class="container"><h2>Error</h2><p>Please try again.</p></section>`;
+  }finally{
+    setBusy(false);
+    updateAdminVisibility();
+  }
+}
+
+function onReady(){
+  renderHeader();
+  renderFooter();
+  document.querySelector('.nav-toggle')?.addEventListener('click', () => {
+    const menu = document.getElementById('primary-menu');
+    const toggle = document.querySelector('.nav-toggle');
+    const expanded = menu.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', String(expanded));
+    
+    // Change icon based on menu state
+    if(expanded) {
+      toggle.textContent = '×';
+    } else {
+      toggle.textContent = '☰';
+    }
+  });
+  
+  // Close menu when clicking outside
+  document.addEventListener('click', (e) => {
+    const menu = document.getElementById('primary-menu');
+    const toggle = document.querySelector('.nav-toggle');
+    if(menu && toggle && !toggle.contains(e.target) && !menu.contains(e.target)) {
+      menu.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.textContent = '☰';
+    }
+  });
+  
+  // Close menu when clicking on a menu link
+  document.getElementById('primary-menu')?.addEventListener('click', (e) => {
+    if(e.target.tagName === 'A') {
+      const menu = document.getElementById('primary-menu');
+      const toggle = document.querySelector('.nav-toggle');
+      menu.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.textContent = '☰';
+    }
+  });
+  window.addEventListener('hashchange', router);
+  router();
+
+  // Back to top behavior
+  const backToTop = document.getElementById('back-to-top');
+  if(backToTop){
+    const onScroll = () => {
+      const y = window.scrollY || document.documentElement.scrollTop;
+      backToTop.hidden = y < 320; // adjust reveal threshold if desired
+    };
+    // We'll bind click after scroller is initialized below
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
+
+  // Use native smooth scrolling for better performance
+  if(backToTop){
+    backToTop.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+
+  // AI Notification functionality
+  initAINotification();
+
+  // Lazy reveal for sections (exclude hero, why, footer)
+  initSectionLazyLoad();
+}
+
+if(document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', onReady);
+} else {
+  onReady();
+}
+
+// Optimized lazy reveal for sections - reduced animation complexity
+function initSectionLazyLoad(){
+  const sections = Array.from(document.querySelectorAll('main > section'));
+  const io = new IntersectionObserver((entries, obs) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        entry.target.classList.add('is-visible');
+        obs.unobserve(entry.target);
+      }
+    });
+  }, { rootMargin: '0px 0px -5% 0px', threshold: 0.1 });
+  sections.forEach(s => {
+    s.classList.add('lazy-in');
+    io.observe(s);
+  });
+}
+
+// AI Notification functionality
+function initAINotification(){
+  let notificationInterval;
+  let isNotificationVisible = false;
+  
+  function showAINotification(){
+    const notification = document.getElementById('ai-notification');
+    if(notification && !isNotificationVisible){
+      notification.style.display = 'block';
+      isNotificationVisible = true;
+      
+      // Auto-hide after 5 seconds
+      setTimeout(() => {
+        hideAINotification();
+      }, 5000);
+    }
+  }
+  
+  function hideAINotification(){
+    const notification = document.getElementById('ai-notification');
+    if(notification){
+      notification.style.display = 'none';
+      isNotificationVisible = false;
+    }
+  }
+  
+  // Global function for close button
+  window.closeAINotification = hideAINotification;
+  
+  // Show notification every 40 seconds
+  function startNotificationInterval(){
+    notificationInterval = setInterval(() => {
+      showAINotification();
+    }, 40000);
+  }
+  
+  // Show notification immediately on site load
+  setTimeout(() => {
+    showAINotification();
+    startNotificationInterval();
+  }, 2000);
+  
+  // Pause notifications when user is interacting with the page
+  let userActivityTimeout;
+  function resetNotificationTimer(){
+    clearTimeout(userActivityTimeout);
+    userActivityTimeout = setTimeout(() => {
+      if(notificationInterval){
+        clearInterval(notificationInterval);
+        startNotificationInterval();
+      }
+    }, 30000); // Resume after 30 seconds of inactivity
+  }
+  
+  // Listen for user activity
+  ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'].forEach(event => {
+    document.addEventListener(event, resetNotificationTimer, true);
+  });
+}
