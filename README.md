@@ -1,0 +1,2 @@
+# Kina-Resort
+Resort Website
