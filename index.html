@@ -135,6 +135,64 @@
       </div>
     </div>
 
+    <!-- AI Chatbot Conversation Popup -->
+    <div id="ai-chat-popup" class="ai-chat-popup" style="display: none">
+      <div class="ai-chat-header">
+        <div class="ai-chat-user-info">
+          <div class="ai-avatar">
+            <div class="avatar-img">🤖</div>
+          </div>
+          <div class="ai-chat-details">
+            <h3 class="ai-name">Kina Resort AI</h3>
+            <span class="ai-status">
+              <span class="status-dot"></span>
+              Online
+            </span>
+          </div>
+        </div>
+        <div class="ai-chat-actions">
+          <button class="ai-chat-minimize" onclick="minimizeAIChat()" title="Minimize">
+            −
+          </button>
+          <button class="ai-chat-close" onclick="closeAIChat()" title="Close">
+            ×
+          </button>
+        </div>
+      </div>
+      
+      <div class="ai-chat-messages" id="ai-chat-messages">
+        <div class="message-group ai-message-group">
+          <div class="message-avatar">
+            <div class="avatar-img">🤖</div>
+          </div>
+          <div class="message-bubble ai-message-bubble">
+            <div class="message-text">
+              <p>Hello! I'm your Kina Resort assistant. How can I help you today?</p>
+            </div>
+            <div class="message-time">Just now</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="ai-chat-input-container">
+        <div class="ai-chat-input-wrapper">
+          <input 
+            type="text" 
+            id="ai-chat-input" 
+            class="ai-chat-input" 
+            placeholder="Type a message..."
+            onkeypress="handleAIChatKeypress(event)"
+          >
+          <button class="ai-chat-send" onclick="sendAIMessage()" title="Send message">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22,2 15,22 11,13 2,9 22,2"></polygon>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- Page Templates: keep structure in HTML for readability and easy edits -->
     <template id="tpl-home">
       <section id="section-hero" class="container">

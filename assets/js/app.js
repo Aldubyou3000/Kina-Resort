@@ -11,9 +11,15 @@ import { BookingsPage } from './pages/bookings.js';
 import { AdminPage } from './pages/admin.js';
 import { WeatherPage } from './pages/weather.js';
 import { CheckoutPage } from './pages/checkout.js';
+import { AboutPage } from './pages/about.js';
 import { getAuthState } from './utils/state.js';
+import { initSmoothScroll, destroySmoothScroll, scrollToTop } from './utils/smoothScroll.js';
+import { initHomepageScrollAnimations, cleanupScrollAnimations } from './utils/scrollAnimation.js';
+import './components/aiChat.js'; // AI Chat functionality
 
-// Removed custom SmoothScroll implementation for better performance
+// Global variables for smooth scrolling and animations
+let lenisInstance = null;
+let scrollAnimations = null;
 
 const routes = {
   '/': HomePage,
@@ -24,7 +30,7 @@ const routes = {
   '/admin': AdminPage,
   '/weather': WeatherPage,
   '/checkout': CheckoutPage,
-  '/about': () => `<section class="container"><h2>About Kina Resort</h2><p>Experience tropical serenity with modern comfort.</p></section>`
+  '/about': AboutPage
 };
 
 function updateAdminVisibility(){
@@ -37,6 +43,12 @@ function updateAdminVisibility(){
 
 async function router(){
   const path = location.hash.replace('#','') || '/';
+  
+  // Cleanup previous scroll animations
+  if (scrollAnimations) {
+    cleanupScrollAnimations(scrollAnimations);
+    scrollAnimations = null;
+  }
   
   // Handle auth modal globally
   if(path === '/auth'){
@@ -66,6 +78,13 @@ async function router(){
     } else {
       main.innerHTML = '';
     }
+    
+    // Initialize scroll animations for homepage (excluding section-why)
+    if (path === '/' || path === '') {
+      setTimeout(() => {
+        scrollAnimations = initHomepageScrollAnimations();
+      }, 100); // Small delay to ensure DOM is ready
+    }
   }catch(err){
     console.error(err);
     showToast('Something went wrong loading this page.', 'error');
@@ -79,6 +98,10 @@ async function router(){
 function onReady(){
   renderHeader();
   renderFooter();
+  
+  // Initialize smooth scrolling
+  lenisInstance = initSmoothScroll();
+  
   document.querySelector('.nav-toggle')?.addEventListener('click', () => {
     const menu = document.getElementById('primary-menu');
     const toggle = document.querySelector('.nav-toggle');
@@ -129,10 +152,14 @@ function onReady(){
     onScroll();
   }
 
-  // Use native smooth scrolling for better performance
+  // Use Lenis smooth scrolling if available, otherwise fallback to native
   if(backToTop){
     backToTop.addEventListener('click', () => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (lenisInstance) {
+        scrollToTop();
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     });
   }
 
@@ -148,6 +175,16 @@ if(document.readyState === 'loading'){
 } else {
   onReady();
 }
+
+// Cleanup on page unload
+window.addEventListener('beforeunload', () => {
+  if (lenisInstance) {
+    destroySmoothScroll();
+  }
+  if (scrollAnimations) {
+    cleanupScrollAnimations(scrollAnimations);
+  }
+});
 
 // Optimized lazy reveal for sections - reduced animation complexity
 function initSectionLazyLoad(){
