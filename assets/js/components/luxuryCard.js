@@ -51,9 +51,12 @@ export function createLuxuryCard(cardData) {
 
 // Handle Book Now button click
 window.handleBookNow = function(packageName) {
+  // Navigate to rooms page (room booking system)
+  window.location.hash = '#/rooms';
+  
   // Show toast notification
   if (window.showToast) {
-    window.showToast(`Booking ${packageName}...`, 'success');
+    window.showToast(`Redirecting to room booking for ${packageName}...`, 'success');
   }
   
   // Call custom onBook function if provided

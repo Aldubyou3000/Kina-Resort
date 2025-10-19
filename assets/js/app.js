@@ -7,14 +7,19 @@ import { HomePage } from './pages/home.js';
 import { PackagesPage, initLuxuryPackages } from './pages/packages.js';
 import { RoomsPage } from './pages/rooms.js';
 import { AuthPage } from './pages/auth.js';
+import { RegisterPage } from './pages/register.js';
+import { ForgotPasswordPage } from './pages/forgotPassword.js';
+import { DashboardPage } from './pages/dashboard.js';
 import { BookingsPage } from './pages/bookings.js';
 import { AdminPage } from './pages/admin.js';
 import { WeatherPage } from './pages/weather.js';
 import { CheckoutPage } from './pages/checkout.js';
 import { AboutPage } from './pages/about.js';
+import { TermsPage } from './pages/terms.js';
 import { getAuthState } from './utils/state.js';
 import { initSmoothScroll, destroySmoothScroll, scrollToTop } from './utils/smoothScroll.js';
 import { initHomepageScrollAnimations, cleanupScrollAnimations } from './utils/scrollAnimation.js';
+import './utils/auth.js'; // Initialize auth system
 import './components/aiChat.js'; // AI Chat functionality
 
 // Global variables for smooth scrolling and animations
@@ -26,11 +31,15 @@ const routes = {
   '/packages': PackagesPage,
   '/rooms': RoomsPage,
   '/auth': AuthPage,
+  '/register': RegisterPage,
+  '/forgot-password': ForgotPasswordPage,
+  '/dashboard': DashboardPage,
   '/bookings': BookingsPage,
   '/admin': AdminPage,
   '/weather': WeatherPage,
   '/checkout': CheckoutPage,
-  '/about': AboutPage
+  '/about': AboutPage,
+  '/terms': TermsPage
 };
 
 function updateAdminVisibility(){
@@ -43,6 +52,9 @@ function updateAdminVisibility(){
 
 async function router(){
   const path = location.hash.replace('#','') || '/';
+  
+  // Scroll to top when navigating
+  window.scrollTo({ top: 0, behavior: 'smooth' });
   
   // Cleanup previous scroll animations
   if (scrollAnimations) {
@@ -57,6 +69,26 @@ async function router(){
     tempDiv.innerHTML = authModalHTML;
     const authModal = tempDiv.firstElementChild;
     document.body.appendChild(authModal);
+    return;
+  }
+  
+  // Handle register modal globally
+  if(path === '/register'){
+    const registerModalHTML = await RegisterPage();
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = registerModalHTML;
+    const registerModal = tempDiv.firstElementChild;
+    document.body.appendChild(registerModal);
+    return;
+  }
+  
+  // Handle forgot password modal globally
+  if(path === '/forgot-password'){
+    const forgotPasswordModalHTML = await ForgotPasswordPage();
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = forgotPasswordModalHTML;
+    const forgotPasswordModal = tempDiv.firstElementChild;
+    document.body.appendChild(forgotPasswordModal);
     return;
   }
   
@@ -142,6 +174,16 @@ function onReady(){
       menu.classList.remove('open');
       toggle.setAttribute('aria-expanded', 'false');
       toggle.textContent = '☰';
+    }
+  });
+
+  // Scroll to top for all anchor links
+  document.addEventListener('click', (e) => {
+    if (e.target.tagName === 'A' && e.target.getAttribute('href')?.startsWith('#')) {
+      // Small delay to allow hash change to process first
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 50);
     }
   });
   window.addEventListener('hashchange', router);

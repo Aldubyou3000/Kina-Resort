@@ -1,58 +1,134 @@
 import { setAuthState } from '../utils/state.js';
 import { showToast } from '../components/toast.js';
+import { AuthManager } from '../utils/auth.js';
 
 export async function AuthPage(){
   window.kinaLogin = (e) => {
     e.preventDefault();
     const form = e.target.closest('form');
     const email = form.querySelector('input[name="email"]').value.trim();
-    const pass = form.querySelector('input[name="password"]').value;
-    if(!email || !pass){ showToast('Email and password are required','error'); return; }
-    const role = email.includes('admin') ? 'admin' : (email.includes('staff') ? 'staff' : 'guest');
-    setAuthState({ user: { email }, role });
-    showToast(`Welcome ${email.split('@')[0]}!`, 'success');
-    document.querySelector('.auth-modal')?.remove();
-    location.hash = '#/';
+    const password = form.querySelector('input[name="password"]').value.trim();
+    
+    if(!email || !password){
+      showToast('Please fill in all fields','error'); 
+      return; 
+    }
+    
+    // Use the auth manager for login
+    const result = window.kinaAuth.login(email, password);
+    
+    if (result.success) {
+      showToast('Login successful! Welcome back, ' + result.user.firstName + '!', 'success');
+      window.kinaCloseModal();
+      // Redirect to dashboard
+      setTimeout(() => {
+        location.hash = '#/dashboard';
+      }, 1000);
+    } else {
+      showToast(result.message, 'error');
+    }
   };
 
   window.kinaRegister = (e) => {
     e.preventDefault();
     const form = e.target.closest('form');
+    const firstName = form.querySelector('input[name="firstName"]').value.trim();
+    const lastName = form.querySelector('input[name="lastName"]').value.trim();
     const email = form.querySelector('input[name="email"]').value.trim();
-    const pass = form.querySelector('input[name="password"]').value;
-    const name = form.querySelector('input[name="name"]').value.trim();
-    if(!email || !pass || !name){ showToast('All fields are required','error'); return; }
-    showToast('Account created. Please log in.', 'success');
-    window.kinaToggleAuthForm('login');
+    const password = form.querySelector('input[name="password"]').value.trim();
+    const confirmPassword = form.querySelector('input[name="confirmPassword"]').value.trim();
+    const termsAgreed = form.querySelector('input[name="termsAgreed"]').checked;
+    const privacyAgreed = form.querySelector('input[name="privacyAgreed"]').checked;
+    const cookiesAgreed = form.querySelector('input[name="cookiesAgreed"]').checked;
+    const personalInfoAgreed = form.querySelector('input[name="personalInfoAgreed"]').checked;
+    
+    // Validation
+    if(!firstName || !lastName || !email || !password || !confirmPassword){
+      showToast('All fields are required','error'); 
+      return; 
+    }
+    
+    if(password !== confirmPassword){
+      showToast('Passwords do not match','error'); 
+      return; 
+    }
+    
+    if(password.length < 8){
+      showToast('Password must be at least 8 characters','error'); 
+      return; 
+    }
+    
+    if(!termsAgreed || !privacyAgreed || !cookiesAgreed || !personalInfoAgreed){
+      showToast('Please agree to all terms and conditions','error'); 
+      return; 
+    }
+    
+    // Use the auth manager for registration
+    const result = window.kinaAuth.register({
+      firstName,
+      lastName,
+      email,
+      password
+    });
+    
+    if (result.success) {
+      showToast('Registration successful! Welcome to Kina Resort, ' + result.user.firstName + '!', 'success');
+      window.kinaCloseModal();
+      // Redirect to dashboard
+      setTimeout(() => {
+        location.hash = '#/dashboard';
+      }, 1000);
+    } else {
+      showToast(result.message, 'error');
+    }
   };
 
-  window.kinaToggleAuthForm = (mode) => {
-    const loginForm = document.querySelector('.auth-login-form');
-    const registerForm = document.querySelector('.auth-register-form');
-    const loginTab = document.querySelector('.auth-tab-login');
-    const registerTab = document.querySelector('.auth-tab-register');
+  window.kinaShowRegister = () => {
+    // Remove any existing modals
+    document.querySelectorAll('.auth-modal').forEach(modal => modal.remove());
+    // Small delay to ensure cleanup
+    setTimeout(() => {
+      location.hash = '#/register';
+    }, 10);
+  };
+
+  window.kinaShowLogin = () => {
+    // Remove any existing modals
+    document.querySelectorAll('.auth-modal').forEach(modal => modal.remove());
+    // Small delay to ensure cleanup
+    setTimeout(() => {
+      location.hash = '#/auth';
+    }, 10);
+  };
+
+  window.kinaShowForgotPassword = () => {
+    // Remove any existing modals
+    document.querySelectorAll('.auth-modal').forEach(modal => modal.remove());
+    // Small delay to ensure cleanup
+    setTimeout(() => {
+      location.hash = '#/forgot-password';
+    }, 10);
+  };
+
+  window.kinaCloseModal = () => {
+    // Remove all auth modals
+    document.querySelectorAll('.auth-modal').forEach(modal => modal.remove());
+    // Navigate back to home
+    location.hash = '#/';
+  };
+
+  window.kinaForgotPassword = (e) => {
+    e.preventDefault();
+    const form = e.target.closest('form');
+    const email = form.querySelector('input[name="email"]').value.trim();
     
-    if (mode === 'login') {
-      loginForm.style.display = 'block';
-      registerForm.style.display = 'none';
-      loginTab.classList.add('active');
-      registerTab.classList.remove('active');
-      // Apply gold accent styles directly
-      loginTab.style.color = '#ffd21c';
-      loginTab.style.borderBottom = '3px solid #ffd21c';
-      registerTab.style.color = 'var(--color-muted)';
-      registerTab.style.borderBottom = '3px solid transparent';
-    } else {
-      loginForm.style.display = 'none';
-      registerForm.style.display = 'block';
-      loginTab.classList.remove('active');
-      registerTab.classList.add('active');
-      // Apply gold accent styles directly
-      registerTab.style.color = '#ffd21c';
-      registerTab.style.borderBottom = '3px solid #ffd21c';
-      loginTab.style.color = 'var(--color-muted)';
-      loginTab.style.borderBottom = '3px solid transparent';
+    if(!email){
+      showToast('Please enter your email address','error'); 
+      return; 
     }
+    
+    showToast('Password reset instructions have been sent to your email.', 'success');
+    window.kinaShowLogin();
   };
 
   window.kinaTogglePassword = (inputId) => {
@@ -70,17 +146,17 @@ export async function AuthPage(){
   };
 
   window.kinaGoogleSignIn = () => {
-    showToast('Google Sign-In coming soon!', 'success');
+    showToast('Google Sign-In is only available for users who have already registered with their Gmail account.', 'info');
   };
 
   return `
   <div class="auth-modal" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px;">
     <div class="auth-modal-content" style="background: white; border-radius: 20px; max-width: 450px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 50px rgba(0,0,0,0.25); position: relative;">
       <!-- Close button -->
-      <button onclick="document.querySelector('.auth-modal').remove()" style="position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 24px; color: white; cursor: pointer; z-index: 1; transition: all 0.1s ease;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">×</button>
+      <button onclick="kinaCloseModal()" style="position: absolute; top: 16px; right: 16px; width: 32px; height: 32px; background: transparent; border: none; color: white; cursor: pointer; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; opacity: 0.8; font-weight: 900; font-size: 24px; z-index: 1;" onmouseover="this.style.backgroundColor='rgba(255,255,255,0.1)'; this.style.opacity='1'" onmouseout="this.style.backgroundColor='transparent'; this.style.opacity='0.8'">×</button>
       
       <!-- Header -->
-      <div class="auth-header" style="background: linear-gradient(135deg, var(--color-accent) 0%, #2c5aa0 100%); padding: 40px 32px 32px; border-radius: 20px 20px 0 0; text-align: center; position: relative; overflow: hidden;">
+      <div class="auth-header" style="background: linear-gradient(135deg, var(--color-accent) 0%, #2c5aa0 100%); padding: 24px 32px 20px; border-radius: 20px 20px 0 0; text-align: center; position: relative; overflow: hidden;">
         <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url('images/kina1.jpg') center/cover; opacity: 0.1; z-index: 0;"></div>
         <div style="position: relative; z-index: 1;">
           <h2 style="color: white; font-size: 28px; margin: 0 0 8px;">Welcome to Kina Resort</h2>
@@ -88,33 +164,35 @@ export async function AuthPage(){
         </div>
       </div>
       
-      <!-- Tab Navigation -->
-      <div class="auth-tabs" style="display: flex; background: var(--color-bg); border-bottom: 1px solid var(--border);">
-        <button class="auth-tab-login active" onclick="kinaToggleAuthForm('login')" style="flex: 1; padding: 16px; background: none; border: none; font-weight: 600; color: #ffd21c; border-bottom: 3px solid #ffd21c; cursor: pointer; transition: all 0.1s ease;">Sign In</button>
-        <button class="auth-tab-register" onclick="kinaToggleAuthForm('register')" style="flex: 1; padding: 16px; background: none; border: none; font-weight: 600; color: var(--color-muted); border-bottom: 3px solid transparent; cursor: pointer; transition: all 0.1s ease;">Register</button>
-      </div>
-      
       <!-- Login Form -->
-      <div class="auth-login-form" style="padding: 32px; display: block;">
-        <form onsubmit="kinaLogin(event)" style="display: flex; flex-direction: column; gap: 20px;">
+      <div class="auth-login-form" style="padding: 24px; display: block;">
+        <form onsubmit="kinaLogin(event)" style="display: flex; flex-direction: column; gap: 16px;">
           <div>
             <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--color-text);">Email Address</label>
-            <input type="email" name="email" required placeholder="Enter your email" style="width: 100%; padding: 14px 16px; border-radius: 12px; border: 2px solid var(--border); transition: all 0.2s ease; font-size: 16px;" onfocus="this.style.borderColor='#666'; this.style.boxShadow='0 0 0 3px rgba(102, 102, 102, 0.1)'" onblur="this.style.borderColor='var(--border)'; this.style.boxShadow='none'">
+            <input type="email" name="email" required placeholder="Enter your email" style="width: 100%; padding: 14px 16px; border-radius: 12px; border: 1px solid #d1d5db; background: #f9fafb; transition: all 0.2s ease; font-size: 16px; outline: none;" onfocus="this.style.background='white'; this.style.borderColor='#38b6ff'; this.style.boxShadow='0 0 0 3px rgba(56, 182, 255, 0.1)'" onblur="this.style.background='#f9fafb'; this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
           </div>
           <div>
             <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--color-text);">Password</label>
             <div style="position: relative;">
-              <input type="password" name="password" id="login-password" required placeholder="Enter your password" style="width: 100%; padding: 14px 50px 14px 16px; border-radius: 12px; border: 2px solid var(--border); transition: all 0.2s ease; font-size: 16px;" onfocus="this.style.borderColor='#666'; this.style.boxShadow='0 0 0 3px rgba(102, 102, 102, 0.1)'" onblur="this.style.borderColor='var(--border)'; this.style.boxShadow='none'">
+              <input type="password" name="password" id="login-password" required placeholder="Enter your password" style="width: 100%; padding: 14px 50px 14px 16px; border-radius: 12px; border: 1px solid #d1d5db; background: #f9fafb; transition: all 0.2s ease; font-size: 16px; outline: none;" onfocus="this.style.background='white'; this.style.borderColor='#38b6ff'; this.style.boxShadow='0 0 0 3px rgba(56, 182, 255, 0.1)'" onblur="this.style.background='#f9fafb'; this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
               <button type="button" onclick="kinaTogglePassword('login-password')" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #333; transition: color 0.2s ease;" onmouseover="this.style.color='#ffd21c'" onmouseout="this.style.color='#333'"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
             </div>
           </div>
-          <div style="text-align: right; margin-top: -8px;">
-            <a href="#/" style="color: #ffd21c; text-decoration: none; font-size: 14px;">Forgot password?</a>
+          <div style="text-align: right; margin-top: -4px;">
+            <a href="#/forgot-password" onclick="kinaShowForgotPassword()" style="color: #ffd21c; text-decoration: none; font-size: 14px;">Forgot password?</a>
           </div>
           <button type="submit" style="width: 100%; padding: 16px; background: #ffd21c; color: var(--color-text); border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.background='#e6c200'" onmouseout="this.style.background='#ffd21c'">Sign In</button>
           
+          <!-- Register Link -->
+          <div style="text-align: center; margin-top: 12px;">
+            <p style="color: var(--color-muted); margin: 0; font-size: 14px;">
+              Don't have an account? 
+              <a href="#/register" onclick="kinaShowRegister()" style="color: #ffd21c; text-decoration: none; font-weight: 600;">Create one here</a>
+            </p>
+          </div>
+          
           <!-- Divider -->
-          <div style="display: flex; align-items: center; margin: 20px 0;">
+          <div style="display: flex; align-items: center; margin: 16px 0;">
             <div style="flex: 1; height: 1px; background: var(--border);"></div>
             <span style="padding: 0 16px; color: var(--color-muted); font-size: 14px;">or</span>
             <div style="flex: 1; height: 1px; background: var(--border);"></div>
@@ -130,31 +208,6 @@ export async function AuthPage(){
             </svg>
             Continue with Google
           </button>
-        </form>
-      </div>
-      
-      <!-- Register Form -->
-      <div class="auth-register-form" style="padding: 32px; display: none;">
-        <form onsubmit="kinaRegister(event)" style="display: flex; flex-direction: column; gap: 20px;">
-          <div>
-            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--color-text);">Full Name</label>
-            <input type="text" name="name" required placeholder="Enter your full name" style="width: 100%; padding: 14px 16px; border-radius: 12px; border: 2px solid var(--border); transition: all 0.2s ease; font-size: 16px;" onfocus="this.style.borderColor='#666'; this.style.boxShadow='0 0 0 3px rgba(102, 102, 102, 0.1)'" onblur="this.style.borderColor='var(--border)'; this.style.boxShadow='none'">
-          </div>
-          <div>
-            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--color-text);">Email Address</label>
-            <input type="email" name="email" required placeholder="Enter your email" style="width: 100%; padding: 14px 16px; border-radius: 12px; border: 2px solid var(--border); transition: all 0.2s ease; font-size: 16px;" onfocus="this.style.borderColor='#666'; this.style.boxShadow='0 0 0 3px rgba(102, 102, 102, 0.1)'" onblur="this.style.borderColor='var(--border)'; this.style.boxShadow='none'">
-          </div>
-          <div>
-            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--color-text);">Password</label>
-            <div style="position: relative;">
-              <input type="password" name="password" id="register-password" required placeholder="Create a password" style="width: 100%; padding: 14px 50px 14px 16px; border-radius: 12px; border: 2px solid var(--border); transition: all 0.2s ease; font-size: 16px;" onfocus="this.style.borderColor='#666'; this.style.boxShadow='0 0 0 3px rgba(102, 102, 102, 0.1)'" onblur="this.style.borderColor='var(--border)'; this.style.boxShadow='none'">
-              <button type="button" onclick="kinaTogglePassword('register-password')" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #333; transition: color 0.2s ease;" onmouseover="this.style.color='#ffd21c'" onmouseout="this.style.color='#333'"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
-            </div>
-          </div>
-          <div style="text-align: center; margin-top: -8px; font-size: 14px; color: var(--color-muted);">
-            By creating an account, you agree to our <a href="#/" style="color: #ffd21c; text-decoration: none;">Terms of Service</a>
-          </div>
-          <button type="submit" style="width: 100%; padding: 16px; background: #ffd21c; color: var(--color-text); border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.background='#e6c200'" onmouseout="this.style.background='#ffd21c'">Create Account</button>
         </form>
       </div>
     </div>
@@ -199,6 +252,10 @@ export async function AuthPage(){
       }
       .auth-login-form, .auth-register-form {
         padding: 24px !important;
+      }
+      .auth-register-form div[style*="grid-template-columns: 1fr 1fr"] {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
       }
     }
   </style>`;

@@ -42,6 +42,9 @@ export async function PackagesPage(){
     <section class="packages-section">
       <div class="container">
         <!-- Modern Search and Filter Controls -->
+        <div class="search-filter-wrapper" style="background: linear-gradient(135deg, var(--color-accent) 0%, #2c5aa0 100%); position: relative; overflow: hidden; margin: -20px -20px 40px -20px; border-radius: 0 0 20px 20px; padding: 20px 0;">
+          <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url('images/kina1.jpg') center/cover; opacity: 0.1; z-index: 0;"></div>
+          <div style="position: relative; z-index: 1;">
         <div class="search-filter-container">
           <div class="search-box">
             <div class="search-icon">
@@ -71,6 +74,8 @@ export async function PackagesPage(){
             <button class="filter-tab" data-category="rooms" onclick="setActiveFilter(this, 'rooms')">Rooms</button>
             <button class="filter-tab" data-category="menu" onclick="setActiveFilter(this, 'menu')">Dining</button>
             <button class="filter-tab" data-category="activities" onclick="setActiveFilter(this, 'activities')">Activities</button>
+          </div>
+        </div>
           </div>
         </div>
         
@@ -141,17 +146,16 @@ export async function PackagesPage(){
           font-weight: 700;
           margin: 0 0 24px 0;
           text-align: center;
-          font-family: 'Rosekina', cursive;
         }
         
         .search-filter-container {
           background: white;
-          border-radius: 12px;
-          padding: 20px;
-          margin-bottom: 24px;
-          box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-          border: 1px solid #e2e8f0;
-          max-width: 800px;
+          border-radius: 16px;
+          padding: 24px;
+          margin-bottom: 0;
+          box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+          border: none;
+          max-width: 600px;
           margin-left: auto;
           margin-right: auto;
         }
@@ -287,17 +291,20 @@ export async function PackagesPage(){
         
         .package-section {
           margin-bottom: 60px;
+          background: white;
+          border-radius: 16px;
+          padding: 30px;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
         }
         
         .section-title {
-          font-size: 28px;
+          font-size: 36px;
           font-weight: 700;
           color: var(--color-text);
           margin: 0 0 8px 0;
           display: flex;
           align-items: center;
           gap: 12px;
-          font-family: 'Rosekina', cursive;
           position: relative;
         }
         
@@ -306,7 +313,7 @@ export async function PackagesPage(){
           position: absolute;
           bottom: -6px;
           left: 0;
-          right: 0;
+          width: 100px;
           height: 3px;
           background: linear-gradient(90deg, #ffd700 0%, #ffed4e 50%, #ffd700 100%);
           border-radius: 2px;
@@ -430,6 +437,11 @@ export async function PackagesPage(){
         @media (max-width: 768px) {
           .packages-grid {
             grid-template-columns: 1fr;
+          }
+          
+          .package-section {
+            padding: 20px;
+            margin-bottom: 40px;
           }
           
           .package-overlay {

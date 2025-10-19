@@ -1,16 +1,20 @@
 export async function AboutPage() {
   return `
-    <section class="container">
-      <div class="about-hero">
+    <section class="about-hero">
+      <div class="container">
         <h1>About Kina Resort</h1>
       </div>
+    </section>
 
-      <div class="about-content">
+    <section class="about-content">
+      <div class="container">
         <h2>Our Story</h2>
         <p>Nestled along the pristine shores of the Island Province, Kina Resort has been welcoming guests to experience the perfect blend of tropical serenity and modern comfort since our founding. We believe that every guest deserves an authentic island experience that rejuvenates the soul while providing all the conveniences of contemporary living.</p>
       </div>
+    </section>
 
-      <div class="about-content">
+    <section class="about-content">
+      <div class="container">
         <h2>What you can expect at Kina Resort</h2>
         
         <div class="about-features">
@@ -32,18 +36,24 @@ export async function AboutPage() {
           </div>
         </div>
       </div>
+    </section>
 
-      <div class="about-content">
+    <section class="about-content">
+      <div class="container">
         <h2>Guest Experience</h2>
         <p>We believe that exceptional hospitality is about creating moments that matter. From the moment you arrive, our dedicated team is committed to ensuring your stay exceeds expectations.</p>
       </div>
+    </section>
 
-      <div class="about-content">
+    <section class="about-content">
+      <div class="container">
         <h2>Our Commitment to Sustainability</h2>
         <p>Kina Resort is committed to preserving the natural beauty of our island home. We implement eco-friendly practices throughout our operations and work closely with local communities to ensure sustainable tourism.</p>
       </div>
+    </section>
 
-      <div class="about-content">
+    <section class="about-content">
+      <div class="container">
         <h2>Plan Your Visit</h2>
         <p>Ready to experience the magic of Kina Resort? We're here to help you plan the perfect tropical getaway.</p>
         
@@ -56,16 +66,38 @@ export async function AboutPage() {
 
     <style>
       .about-hero {
+        padding: 100px 20px 0px 20px;
         text-align: center;
-        padding: 0 20px 5px 20px;
-        margin-bottom: 0;
+        background: white;
+        padding-block: 0 !important;
+        margin: 0;
+      }
+
+      .about-hero .container {
+        max-width: 800px;
+        margin: 0 auto;
+        margin-bottom: 40px;
       }
 
       .about-hero h1 {
-        font-size: clamp(28px, 4vw, 40px);
-        margin: 0 0 12px;
+        font-size: clamp(36px, 6vw, 56px);
         font-weight: 700;
-        color: var(--color-accent);
+        margin: 0 0 20px 0;
+        color: var(--color-text);
+        position: relative;
+        display: inline-block;
+      }
+
+      .about-hero h1::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 3px;
+        background: #ffd700;
+        border-radius: 2px;
       }
 
       .about-subtitle {
@@ -76,10 +108,17 @@ export async function AboutPage() {
       }
 
       .about-content {
+        padding: 0 20px;
+        margin-bottom: 12px;
+        background: #f8f9fa;
+        position: relative;
+        z-index: 1;
+      }
+
+      .about-content .container {
         max-width: 800px;
         margin: 0 auto;
-        padding: 0 20px 30px 20px;
-        text-align: left;
+        padding: 0;
       }
 
       .about-content h2 {
@@ -88,7 +127,7 @@ export async function AboutPage() {
         color: var(--color-text);
         position: relative;
         display: block;
-        text-align: center;
+        text-align: left;
         width: 100%;
       }
 
@@ -96,9 +135,8 @@ export async function AboutPage() {
         content: '';
         position: absolute;
         bottom: -8px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 60px;
+        left: 0;
+        width: 100px;
         height: 3px;
         background: #ffd700;
         border-radius: 2px;
@@ -107,8 +145,9 @@ export async function AboutPage() {
       .about-content p {
         font-size: 16px;
         line-height: 1.6;
-        margin: 0 0 15px;
+        margin: 0 0 20px;
         color: var(--color-text-secondary);
+        text-align: left;
       }
 
       .about-features {
@@ -161,11 +200,12 @@ export async function AboutPage() {
 
       @media (max-width: 768px) {
         .about-hero {
-          padding: 0 15px 5px 15px;
+          padding: 80px 15px 0px 15px;
         }
 
         .about-content {
-          padding: 0 15px 25px 15px;
+          padding: 0 15px;
+          margin-bottom: 12px;
         }
 
         .about-features {

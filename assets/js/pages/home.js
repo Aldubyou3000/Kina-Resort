@@ -12,16 +12,41 @@ export async function HomePage(){
     s.style.backgroundImage = `url('${src}')`;
     s.style.opacity = i === 0 ? '1' : '0';
   });
+  
+  // Start slideshow after a short delay to ensure DOM is ready
   window.setTimeout(() => {
-    const liveSlides = Array.from(document.querySelectorAll('.hero-slide'));
-    if(liveSlides.length){
-      let i = 0;
-      window.setInterval(() => {
-        liveSlides.forEach((n, idx) => n.style.opacity = idx === i ? 1 : 0);
-        i = (i + 1) % liveSlides.length;
-      }, 4000);
+    // Clear any existing slideshow interval
+    if (window.heroSlideInterval) {
+      clearInterval(window.heroSlideInterval);
     }
-  }, 0);
+    
+    const liveSlides = Array.from(document.querySelectorAll('.hero-slide'));
+    console.log('Found slides:', liveSlides.length); // Debug log
+    
+    if(liveSlides.length > 1){
+      let currentSlide = 0;
+      
+      // Ensure first slide is visible
+      liveSlides.forEach((slide, index) => {
+        slide.style.opacity = index === 0 ? '1' : '0';
+      });
+      
+      const slideInterval = setInterval(() => {
+        console.log('Changing slide from', currentSlide, 'to', (currentSlide + 1) % liveSlides.length); // Debug log
+        
+        // Hide current slide
+        liveSlides[currentSlide].style.opacity = '0';
+        // Show next slide
+        currentSlide = (currentSlide + 1) % liveSlides.length;
+        liveSlides[currentSlide].style.opacity = '1';
+      }, 10000);
+      
+      // Store interval ID for cleanup if needed
+      window.heroSlideInterval = slideInterval;
+    } else {
+      console.log('Not enough slides for slideshow:', liveSlides.length);
+    }
+  }, 500);
 
   // Populate weather
   try{

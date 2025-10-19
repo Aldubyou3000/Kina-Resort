@@ -11,7 +11,7 @@
   --shadow-1: 0 10px 30px rgba(0, 0, 0, 0.08);
   --radius-1: 12px;
   --radius-2: 20px;
-  --maxw: 1280px; /* widened content width to reduce side space */
+  --maxw: 1400px; /* widened content width to reduce side space */
   /* customization tokens */
   --spacing-section-y: clamp(18px, 3.2vw, 28px); /* fluid section spacing */
   --btn-radius: 999px; /* Changed: Make buttons capsule shaped */
@@ -46,7 +46,7 @@ main {
     padding-top: 80px; /* Smaller padding for mobile header */
   }
 }
-body {
+body {  
   margin: 0;
   font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica,
     Arial, sans-serif;
@@ -86,7 +86,6 @@ li {
 /* Home page section titles - black with fancy underline */
 .section-head h2 {
   color: #1a1a1a !important;
-  font-family: 'Rosemartin', cursive;
   position: relative;
   display: inline-block;
 }
@@ -96,7 +95,7 @@ li {
   position: absolute;
   bottom: -8px;
   left: 0;
-  right: 0;
+  width: 100px;
   height: 3px;
   background: linear-gradient(90deg, #ffd700 0%, #ffed4e 50%, #ffd700 100%);
   border-radius: 2px;
@@ -111,7 +110,7 @@ html {
   width: 100%;
   /* Remove horizontal gutters to maximize content width */
   max-width: min(var(--maxw), 100%);
-  margin: 0 auto;
+  margin: 0px auto;
   padding: 20px; /* no extra side padding */
 }
 
@@ -606,6 +605,16 @@ section .section-head h2 {
   font-size: 45px;
 }
 
+/* Homepage section titles - underline reaches end of text */
+#section-why .section-head h2::after,
+#section-gallery .section-head h2::after,
+#section-video .section-head h2::after,
+#section-weather .section-head h2::after,
+#section-cta .section-head h2::after {
+  width: 100%;
+  right: 0;
+}
+
 #section-video {
   position: relative;
   z-index: 1;
@@ -682,7 +691,6 @@ section .section-head h2 {
   position: relative;
   font-size: 36px;
   font-weight: 300;
-  font-family: "Optima", "Noto Sans Thai", sans-serif;
 }
 .feature-content h3::after {
   display: none;
@@ -1353,7 +1361,7 @@ label {
 /* Responsive Design */
 @media (max-width: 480px) {
   .ai-button {
-    bottom: 32px;
+    bottom: 20px;
     right: 16px;
     width: 48px;
     height: 48px;
@@ -1361,19 +1369,68 @@ label {
   
   .ai-chat-popup {
     right: 16px;
-    bottom: 32px;
-    width: calc(100vw - 32px);
-    height: calc(100vh - 32px);
-    max-height: 500px;
-    border-radius: 16px;
+    bottom: 20px;
+    left: 16px;
+    width: auto;
+    height: 500px;
+    max-height: calc(100vh - 40px);
+    border-radius: 24px;
   }
   
   .ai-chat-messages {
     padding: 16px;
+    height: 400px;
+  }
+  
+  .ai-chat-header {
+    padding: 16px;
+  }
+  
+  .ai-chat-user-info {
+    gap: 8px;
+  }
+  
+  .ai-name {
+    font-size: 14px;
+  }
+  
+  .ai-status {
+    font-size: 12px;
   }
   
   .message-group {
     max-width: 90%;
+  }
+  
+  .ai-chat-input-container {
+    padding: 16px;
+  }
+  
+  /* Additional mobile chatbot improvements */
+  
+  .ai-chat-input {
+    font-size: 16px; /* Prevent zoom on iOS */
+    padding: 14px 16px;
+  }
+  
+  .ai-chat-send {
+    width: 44px;
+    height: 44px;
+  }
+  
+  .message-bubble {
+    padding: 10px 14px;
+    border-radius: 14px;
+  }
+  
+  .message-text p {
+    font-size: 15px;
+    line-height: 1.4;
+  }
+  
+  .typing-indicator {
+    padding: 10px 14px;
+    border-radius: 14px;
   }
 }
 
@@ -1383,6 +1440,33 @@ label {
     bottom: 40px;
     width: 360px;
     height: 500px;
+  }
+  
+  .ai-chat-messages {
+    padding: 14px;
+    height: 380px;
+  }
+  
+  .ai-chat-header {
+    padding: 14px 16px;
+  }
+  
+  .ai-chat-input-container {
+    padding: 14px;
+  }
+  
+  .ai-chat-input {
+    font-size: 15px;
+    padding: 13px 15px;
+  }
+  
+  .message-bubble {
+    padding: 11px 15px;
+  }
+  
+  .message-text p {
+    font-size: 14px;
+    line-height: 1.5;
   }
 }
 
@@ -1633,19 +1717,25 @@ label {
   }
 
   .hero-content {
-    left: 16px;
-    right: 16px;
+    left: 50%;
+    right: auto;
+    bottom: 50%;
     max-width: none;
+    transform: translateX(-50%);
+    text-align: center;
+    width: calc(100% - 32px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
 
   .h1 {
-    font-size: 28px;
+    font-size: 66px;
     line-height: 1.2;
   }
 
   .lede {
-    font-size: 16px;
-    margin-bottom: 20px;
     display: none;
   }
 
@@ -1771,9 +1861,7 @@ label {
 
   /* AI notification responsive */
   .ai-notification {
-    right: 16px;
-    bottom: 80px;
-    max-width: calc(100vw - 32px);
+    display: none !important;
   }
 }
 
@@ -1802,7 +1890,7 @@ label {
   }
 
   .h1 {
-    font-size: 24px;
+    font-size: 70px;
   }
 
   .lede {
@@ -2183,10 +2271,10 @@ html.lenis {
 .packages-section {
   background: #f8f9fa;
   padding: 4rem 0;
+  margin: 0;
 }
 
 .packages-hero h2 {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   font-size: 2.5rem;
   font-weight: 700;
   color: #1a202c;
@@ -2219,7 +2307,7 @@ html.lenis {
 /* About page hero section */
 .about-hero {
   text-align: center;
-  padding: 30px 20px;
+  padding: 100px 20px 30px 20px;
   margin-bottom: 20px;
 }
 
@@ -2486,7 +2574,7 @@ html.lenis {
 /* Mobile responsive for about page */
 @media (max-width: 768px) {
   .about-hero {
-    padding: 40px 20px;
+    padding: 80px 20px 30px 20px;
     margin: 20px 0;
   }
 

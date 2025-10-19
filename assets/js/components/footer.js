@@ -14,7 +14,7 @@ export function renderFooter(){
           <ul style="list-style:none;padding:0;margin:0;display:grid;gap:6px">
             <li><a href="#/about">About</a></li>
             <li><a href="#/legal/privacy">Privacy</a></li>
-            <li><a href="#/legal/terms">Terms</a></li>
+            <li><a href="#/terms">Terms</a></li>
           </ul>
         </div>
       </div>

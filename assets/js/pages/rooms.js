@@ -2,9 +2,9 @@ import { showToast } from '../components/toast.js';
 import { openModal } from '../components/modal.js';
 
 const mockRooms = [
-  { id:'r1', title:'Deluxe King', price:6500, img:'assets/images/pool-1.jpg', amenities:['King bed','Sea view','Breakfast'] },
-  { id:'r2', title:'Twin Garden', price:5200, img:'assets/images/pool-2.jpg', amenities:['Twin beds','Garden view','Wi‑Fi'] },
-  { id:'r3', title:'Suite Oceanfront', price:9800, img:'assets/images/pool-3.jpg', amenities:['Suite','Oceanfront','Balcony'] },
+  { id:'r1', title:'Deluxe King', price:6500, img:'images/kina1.jpg', amenities:['King bed','Sea view','Breakfast'] },
+  { id:'r2', title:'Twin Garden', price:5200, img:'images/kina2.jpg', amenities:['Twin beds','Garden view','Wi‑Fi'] },
+  { id:'r3', title:'Suite Oceanfront', price:9800, img:'images/kina3.jpg', amenities:['Suite','Oceanfront','Balcony'] },
 ];
 
 export async function RoomsPage(){
@@ -37,14 +37,28 @@ export async function RoomsPage(){
   };
 
   const search = `
-    <div class=\"search-section\" style=\"padding: 40px 0; margin: -20px -20px 40px -20px; border-radius: 0 0 20px 20px;\">
-      <div class=\"container\" style=\"max-width: 800px;\">
+    <div class=\"search-section\" style=\"padding: 40px 0; margin: -20px -20px 40px -20px; border-radius: 0 0 20px 20px; background: linear-gradient(135deg, var(--color-accent) 0%, #2c5aa0 100%); position: relative; overflow: hidden;\">
+      <div style=\"position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url('images/kina1.jpg') center/cover; opacity: 0.1; z-index: 0;\"></div>
+      <div class=\"container\" style=\"max-width: 800px; position: relative; z-index: 1;\">
         <form class=\"form\" onsubmit=\"kinaSearchRooms(event)\" style=\"background: white; border-radius: 16px; padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.1);\">
           <div class=\"form-row\">
-            <div><label>Check-in</label><input class=\"input\" type=\"date\" name=\"checkin\" required></div>
-            <div><label>Check-out</label><input class=\"input\" type=\"date\" name=\"checkout\" required></div>
-            <div><label>Guests</label><input class=\"input\" type=\"number\" name=\"guests\" min=\"1\" value=\"2\" required></div>
-            <div style=\"align-self:end\"><button class=\"btn primary\" type=\"submit\">Search Rooms</button></div>
+            <div class=\"form-group\">
+              <label>Check-in</label>
+              <input class=\"input\" type=\"date\" name=\"checkin\" min=\"${new Date().toISOString().split('T')[0]}\" required>
+            </div>
+            <div class=\"form-group\">
+              <label>Check-out</label>
+              <input class=\"input\" type=\"date\" name=\"checkout\" min=\"${new Date().toISOString().split('T')[0]}\" required>
+            </div>
+          </div>
+          <div class=\"form-row\">
+            <div class=\"form-group\">
+              <label>Guests</label>
+              <input class=\"input\" type=\"number\" name=\"guests\" placeholder=\"2\" min=\"1\" max=\"8\" required>
+            </div>
+            <div class=\"form-group search-group\">
+              <button class=\"btn primary search-btn\" type=\"submit\">Search Availability</button>
+            </div>
           </div>
         </form>
       </div>
@@ -106,6 +120,103 @@ export async function RoomsPage(){
           position: relative;
           overflow: hidden;
           background: linear-gradient(135deg, var(--color-accent) 0%, #2c5aa0 100%);
+        }
+        .search-section .input {
+          height: 40px;
+          padding: 8px 12px;
+          font-size: 14px;
+          border-radius: 6px;
+          border: 1px solid var(--border);
+          transition: all 0.2s ease;
+        }
+        .search-section .input:focus {
+          border-color: var(--color-accent);
+          box-shadow: 0 0 0 3px rgba(56, 182, 255, 0.1);
+          outline: none;
+        }
+        .search-section .btn.primary {
+          height: 40px;
+          padding: 10px 16px;
+          font-size: 14px;
+          font-weight: 500;
+          border-radius: 6px;
+          min-width: 140px;
+        }
+        
+        /* Dashboard form styling */
+        .search-section .form-row {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 16px;
+        }
+        
+        .search-section .form-group {
+          display: flex;
+          flex-direction: column;
+        }
+        
+        .search-section .form-group label {
+          font-size: 14px;
+          font-weight: 500;
+          color: var(--color-text);
+          margin-bottom: 8px;
+        }
+        
+        .search-section .search-group {
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+        }
+        
+        .search-section .search-btn {
+          height: 40px;
+          width: 100%;
+          margin-top: 0;
+          padding: 8px 16px;
+          box-sizing: border-box;
+          text-align: center;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        /* Mobile responsiveness for search form */
+        @media (max-width: 768px) {
+          .search-section .form-row {
+            grid-template-columns: 1fr;
+            gap: 12px;
+          }
+
+          .search-section .form-group input {
+            font-size: 16px; /* Prevents zoom on iOS */
+          }
+
+          .search-section .search-btn {
+            height: 44px;
+            font-size: 16px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .search-section {
+            padding: 20px 0;
+            margin: -20px -12px 20px -12px;
+          }
+
+          .search-section .form {
+            padding: 16px;
+            margin: 0 8px;
+          }
+
+          .search-section .form-group input {
+            padding: 12px;
+            font-size: 16px;
+          }
+
+          .search-section .search-btn {
+            height: 48px;
+            font-size: 16px;
+          }
         }
         .search-section::before {
           content: '';
