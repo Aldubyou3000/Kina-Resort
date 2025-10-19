@@ -118,5 +118,5 @@ SETUP INSTRUCTIONS:
 5. SECURITY:
    - Never commit API keys to version control
    - Use environment variables in production
-   - Consider using a backend proxy for API calls in production
+   - Consider using a backend proxy for API calls in production             
 */
