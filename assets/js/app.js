@@ -4,7 +4,7 @@ import { renderFooter } from './components/footer.js';
 import { showToast } from './components/toast.js';
 import { setBusy } from './components/loader.js';
 import { HomePage } from './pages/home.js';
-import { PackagesPage } from './pages/packages.js';
+import { PackagesPage, initLuxuryPackages } from './pages/packages.js';
 import { RoomsPage } from './pages/rooms.js';
 import { AuthPage } from './pages/auth.js';
 import { BookingsPage } from './pages/bookings.js';
@@ -83,6 +83,13 @@ async function router(){
     if (path === '/' || path === '') {
       setTimeout(() => {
         scrollAnimations = initHomepageScrollAnimations();
+      }, 100); // Small delay to ensure DOM is ready
+    }
+    
+    // Initialize luxury packages for packages page
+    if (path === '/packages') {
+      setTimeout(() => {
+        initLuxuryPackages();
       }, 100); // Small delay to ensure DOM is ready
     }
   }catch(err){
@@ -232,11 +239,11 @@ function initAINotification(){
   // Global function for close button
   window.closeAINotification = hideAINotification;
   
-  // Show notification every 40 seconds
+  // Show notification every 1 minute
   function startNotificationInterval(){
     notificationInterval = setInterval(() => {
       showAINotification();
-    }, 40000);
+    }, 60000);
   }
   
   // Show notification immediately on site load

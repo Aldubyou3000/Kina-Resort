@@ -1,3 +1,5 @@
+import { createLuxuryCard, createPackagesGrid, samplePackages, allPackages } from '../components/luxuryCard.js';
+
 export async function PackagesPage(){
   const data = [
     { id:'lux-rooms', title:'Luxury Rooms', img:'images/kina1.jpg', price:'₱6,500+/night', desc:'Spacious rooms with ocean views, modern bath, and breakfast.' },
@@ -37,40 +39,79 @@ export async function PackagesPage(){
   };
 
   return `
-    <section class="container">
-      <div class="packages-hero">
-        <div class="container">
-          <div class="section-head">
-            <h2>Discover Our Packages</h2>
-            <p>Experience luxury with our curated offerings</p>
+    <section class="packages-section">
+      <div class="container">
+        <!-- Modern Search and Filter Controls -->
+        <div class="search-filter-container">
+          <div class="search-box">
+            <div class="search-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.35-4.35"></path>
+              </svg>
+            </div>
+            <input 
+              type="text" 
+              id="package-search" 
+              placeholder="Search packages..." 
+              class="search-input"
+              onkeyup="filterPackages()"
+            />
+            <button class="clear-search" onclick="clearSearch()" style="display: none;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
           </div>
-          <div class="packages-controls">
-            <input aria-label="Search" class="input" placeholder="Search packages..." oninput="window.kinaFilterPackages?.(this.value)">
-            <select aria-label="Type filter" onchange="window.kinaFilterPackages?.(this.value)">
-              <option value="">All Categories</option>
-              <option value="rooms">Rooms</option>
-              <option value="pool">Pool</option>
-              <option value="cottages">Cottages</option>
-              <option value="dining">Dining</option>
-            </select>
+          
+          <div class="filter-tabs">
+            <button class="filter-tab active" data-category="" onclick="setActiveFilter(this, '')">All</button>
+            <button class="filter-tab" data-category="cottages" onclick="setActiveFilter(this, 'cottages')">Cottages</button>
+            <button class="filter-tab" data-category="rooms" onclick="setActiveFilter(this, 'rooms')">Rooms</button>
+            <button class="filter-tab" data-category="menu" onclick="setActiveFilter(this, 'menu')">Dining</button>
+            <button class="filter-tab" data-category="activities" onclick="setActiveFilter(this, 'activities')">Activities</button>
           </div>
         </div>
-      </div>
-      
-      <div class="packages-grid">
-        ${data.map(card).join('')}
-      </div>
-      
-      <div class="section-head">
-        <h2>Our Packages</h2>
-        <p>Choose from our curated selection of premium experiences</p>
+        
+        <!-- Cottages Section -->
+        <div class="package-section" id="cottages-section">
+          <h3 class="section-title">Cottages</h3>
+          <div class="packages-grid" id="cottages-grid">
+            <!-- Cottage cards will be inserted here -->
+          </div>
+        </div>
+        
+        <!-- Rooms Section -->
+        <div class="package-section" id="rooms-section">
+          <h3 class="section-title">Rooms & Suites</h3>
+          <div class="packages-grid" id="rooms-grid">
+            <!-- Room cards will be inserted here -->
+          </div>
+        </div>
+        
+        <!-- Menu Section -->
+        <div class="package-section" id="menu-section">
+          <h3 class="section-title">Dining Packages</h3>
+          <div class="packages-grid" id="menu-grid">
+            <!-- Menu cards will be inserted here -->
+          </div>
+        </div>
+        
+        <!-- Activities Section -->
+        <div class="package-section" id="activities-section">
+          <h3 class="section-title">Activities & Tours</h3>
+          <div class="packages-grid" id="activities-grid">
+            <!-- Activity cards will be inserted here -->
+          </div>
+        </div>
       </div>
       
       <style>
         .packages-hero {
           background: linear-gradient(135deg, var(--color-accent) 0%, #2c5aa0 100%);
-          padding: 40px 0;
-          margin: -20px -20px 40px -20px;
+          padding: 120px 0 40px 0;
+          margin: 0 -20px 0 -20px;
           border-radius: 0 0 20px 20px;
           position: relative;
           overflow: hidden;
@@ -94,37 +135,184 @@ export async function PackagesPage(){
           z-index: 0;
         }
         
-        .packages-hero .section-head h2 {
+        .packages-hero h2 {
           color: white;
-          font-size: 36px;
-          margin: 0;
+          font-size: 42px;
+          font-weight: 700;
+          margin: 0 0 24px 0;
+          text-align: center;
+          font-family: 'Rosekina', cursive;
         }
         
-        .packages-hero .section-head p {
-          color: rgba(255,255,255,0.9);
-          margin: 8px 0 0;
-          font-size: 18px;
-        }
-        
-        .packages-controls {
+        .search-filter-container {
           background: white;
-          border-radius: 16px;
-          padding: 24px;
-          box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+          border-radius: 12px;
+          padding: 20px;
+          margin-bottom: 24px;
+          box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+          border: 1px solid #e2e8f0;
+          max-width: 800px;
+          margin-left: auto;
+          margin-right: auto;
+        }
+        
+        .search-box {
+          position: relative;
+          margin-bottom: 16px;
+          max-width: 400px;
+          margin-left: auto;
+          margin-right: auto;
+        }
+        
+        .search-icon {
+          position: absolute;
+          left: 12px;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 16px;
+          height: 16px;
+          color: #64748b;
+          pointer-events: none;
+          z-index: 2;
+        }
+        
+        .search-input {
+          width: 100%;
+          height: 40px;
+          padding: 0 40px 0 36px;
+          border: 1px solid #d1d5db;
+          border-radius: 20px;
+          font-size: 14px;
+          background: #f9fafb;
+          transition: all 0.2s ease;
+          outline: none;
+          font-weight: 400;
+        }
+        
+        .search-input:focus {
+          background: white;
+          border-color: #38b6ff;
+          box-shadow: 0 0 0 3px rgba(56, 182, 255, 0.1);
+        }
+        
+        .search-input::placeholder {
+          color: #9ca3af;
+          font-weight: 400;
+        }
+        
+        .clear-search {
+          position: absolute;
+          right: 12px;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 16px;
+          height: 16px;
+          background: none;
+          border: none;
+          color: #9ca3af;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          z-index: 2;
+        }
+        
+        .clear-search:hover {
+          color: #64748b;
+          transform: translateY(-50%) scale(1.1);
+        }
+        
+        .filter-tabs {
           display: flex;
-          gap: 16px;
+          gap: 6px;
           flex-wrap: wrap;
+          justify-content: center;
+        }
+        
+        .filter-tab {
+          padding: 8px 16px;
+          border: 1px solid #d1d5db;
+          border-radius: 16px;
+          background: #f9fafb;
+          color: #6b7280;
+          font-size: 13px;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          outline: none;
+          white-space: nowrap;
+        }
+        
+        .filter-tab:hover {
+          background: #f3f4f6;
+          border-color: #9ca3af;
+        }
+        
+        .filter-tab.active {
+          background: #38b6ff;
+          border-color: #38b6ff;
+          color: white;
+          box-shadow: 0 2px 8px rgba(56, 182, 255, 0.2);
+        }
+        
+        .filter-tab.active:hover {
+          background: #2a9ce8;
+          border-color: #2a9ce8;
+        }
+        
+        @media (max-width: 768px) {
+          .search-filter-container {
+            padding: 16px;
+            margin-bottom: 20px;
+            margin-left: 16px;
+            margin-right: 16px;
+          }
+          
+          .search-box {
+            max-width: 100%;
+          }
+          
+          .search-input {
+            height: 38px;
+            font-size: 14px;
+          }
+          
+          .filter-tabs {
+            gap: 4px;
+          }
+          
+          .filter-tab {
+            padding: 6px 12px;
+            font-size: 12px;
+          }
+        }
+        
+        .package-section {
+          margin-bottom: 60px;
+        }
+        
+        .section-title {
+          font-size: 28px;
+          font-weight: 700;
+          color: var(--color-text);
+          margin: 0 0 8px 0;
+          display: flex;
           align-items: center;
+          gap: 12px;
+          font-family: 'Rosekina', cursive;
+          position: relative;
         }
         
-        .packages-controls .input {
-          flex: 1;
-          min-width: 200px;
+        .section-title::after {
+          content: '';
+          position: absolute;
+          bottom: -6px;
+          left: 0;
+          right: 0;
+          height: 3px;
+          background: linear-gradient(90deg, #ffd700 0%, #ffed4e 50%, #ffd700 100%);
+          border-radius: 2px;
+          box-shadow: 0 2px 4px rgba(255, 215, 0, 0.3);
         }
         
-        .packages-controls select {
-          min-width: 150px;
-        }
         
         .packages-grid {
           display: grid;
@@ -267,5 +455,102 @@ export async function PackagesPage(){
       </style>
     </section>`;
 }
+
+// Initialize luxury cards after page loads
+export function initLuxuryPackages() {
+  // Wait for DOM to be ready
+  setTimeout(() => {
+    // Initialize each section
+    initializeSection('cottages', allPackages.cottages);
+    initializeSection('rooms', allPackages.rooms);
+    initializeSection('menu', allPackages.menu);
+    initializeSection('activities', allPackages.activities);
+  }, 100);
+}
+
+// Initialize a specific section
+function initializeSection(sectionId, packages) {
+  const grid = document.getElementById(`${sectionId}-grid`);
+  if (grid) {
+    // Clear existing content
+    grid.innerHTML = '';
+    
+    // Create luxury cards for this section
+    packages.forEach(packageData => {
+      const card = createLuxuryCard(packageData);
+      card.setAttribute('data-category', packageData.category);
+      grid.appendChild(card);
+    });
+  }
+}
+
+// Modern search and filter functions
+window.filterPackages = function() {
+  const searchTerm = document.getElementById('package-search')?.value.toLowerCase() || '';
+  const activeTab = document.querySelector('.filter-tab.active');
+  const categoryFilter = activeTab?.getAttribute('data-category') || '';
+  
+  // Show/hide clear button
+  const clearBtn = document.querySelector('.clear-search');
+  if (clearBtn) {
+    clearBtn.style.display = searchTerm ? 'block' : 'none';
+  }
+  
+  // Get all package sections
+  const sections = ['cottages', 'rooms', 'menu', 'activities'];
+  
+  sections.forEach(sectionId => {
+    const section = document.getElementById(`${sectionId}-section`);
+    const grid = document.getElementById(`${sectionId}-grid`);
+    const cards = grid?.querySelectorAll('.luxury-card') || [];
+    
+    let visibleCards = 0;
+    
+    cards.forEach(card => {
+      const title = card.querySelector('.card-title')?.textContent.toLowerCase() || '';
+      const description = card.querySelector('.card-description')?.textContent.toLowerCase() || '';
+      const category = card.getAttribute('data-category') || '';
+      
+      const matchesSearch = !searchTerm || title.includes(searchTerm) || description.includes(searchTerm);
+      const matchesCategory = !categoryFilter || category === categoryFilter;
+      
+      if (matchesSearch && matchesCategory) {
+        card.style.display = '';
+        visibleCards++;
+      } else {
+        card.style.display = 'none';
+      }
+    });
+    
+    // Show/hide section based on visible cards
+    if (section) {
+      section.style.display = visibleCards > 0 ? 'block' : 'none';
+    }
+  });
+};
+
+// Set active filter tab
+window.setActiveFilter = function(button, category) {
+  // Remove active class from all tabs
+  document.querySelectorAll('.filter-tab').forEach(tab => {
+    tab.classList.remove('active');
+  });
+  
+  // Add active class to clicked tab
+  button.classList.add('active');
+  
+  // Trigger filter
+  filterPackages();
+};
+
+// Clear search function
+window.clearSearch = function() {
+  const searchInput = document.getElementById('package-search');
+  if (searchInput) {
+    searchInput.value = '';
+    searchInput.focus();
+    filterPackages();
+  }
+};
 
 

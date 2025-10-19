@@ -12,15 +12,6 @@ export async function WeatherPage(){
     
     return `
       <section class="container">
-        <div class="weather-hero">
-          <div class="container">
-            <div class="section-head">
-              <h2>Weather & Planning</h2>
-              <p>Plan your perfect stay with real-time weather updates</p>
-            </div>
-          </div>
-        </div>
-        
         <div class="weather" role="region" aria-label="Current weather">
           <div class="current">
             <div class="temp">${w.current.tempC}°C</div>
@@ -51,45 +42,6 @@ export async function WeatherPage(){
         </div>
         
         <style>
-          .weather-hero {
-            background: linear-gradient(135deg, var(--color-accent) 0%, #2c5aa0 100%);
-            padding: 40px 0;
-            margin: -20px -20px 40px -20px;
-            border-radius: 0 0 20px 20px;
-            position: relative;
-            overflow: hidden;
-          }
-          
-          .weather-hero .container {
-            max-width: 1000px;
-            position: relative;
-            z-index: 1;
-          }
-          
-          .weather-hero::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('images/kina3.jpg') center/cover;
-            opacity: 0.1;
-            z-index: 0;
-          }
-          
-          .weather-hero .section-head h2 {
-            color: white;
-            font-size: 36px;
-            margin: 0;
-          }
-          
-          .weather-hero .section-head p {
-            color: rgba(255,255,255,0.9);
-            margin: 8px 0 0;
-            font-size: 18px;
-          }
-          
           .weather {
             background: white;
             border-radius: 16px;

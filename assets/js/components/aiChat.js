@@ -7,7 +7,8 @@ import { AI_CONFIG, isAPIConfigured, getMockResponse } from '../config/aiConfig.
 // AI CHAT STATE MANAGEMENT
 // =============================================================================
 let isAIChatOpen = false;
-let chatHistory = [];
+let chatHistory = []; // For display purposes
+let apiHistory = []; // Separate history for API context to avoid format conflicts
 
 // =============================================================================
 // AI CHAT UI FUNCTIONS
@@ -120,7 +121,7 @@ async function sendAIMessage() {
     removeTypingIndicator(typingId);
     
     // Add error message
-    addMessageToChat('Sorry, I\'m having trouble connecting right now. Please try again later.', 'ai');
+    addMessageToChat('Sorry, there was an error. Please try again.', 'ai');
   }
 }
 
@@ -152,7 +153,7 @@ function addMessageToChat(message, sender) {
   // Scroll to bottom
   messagesContainer.scrollTop = messagesContainer.scrollHeight;
   
-  // Add to chat history
+  // Add to display chat history
   chatHistory.push({ message, sender, timestamp: new Date() });
 }
 
@@ -202,9 +203,6 @@ function removeTypingIndicator(typingId) {
 // Get AI response from API
 async function getAIResponse(userMessage) {
   console.log('Getting AI response for:', userMessage);
-  console.log('API configured:', isAPIConfigured());
-  console.log('API endpoint:', AI_CONFIG.API_ENDPOINT);
-  console.log('Model:', AI_CONFIG.MODEL);
   
   // Check if API is configured
   if (!isAPIConfigured()) {
@@ -212,31 +210,28 @@ async function getAIResponse(userMessage) {
     return getMockResponse(userMessage);
   }
   
-  // Add user message to chat history
-  chatHistory.push({
-    role: 'user',
-    content: userMessage
-  });
+  // Add user message to API history
+  apiHistory.push({ role: 'user', content: userMessage });
   
-  // Prepare messages for API
-  const messages = [
-    {
-      role: 'system',
-      content: AI_CONFIG.SYSTEM_PROMPT
-    },
-    ...chatHistory.slice(-AI_CONFIG.MAX_HISTORY) // Keep last N messages for context
-  ];
-  
-  console.log('Sending request to API with messages:', messages);
+  // Limit history to prevent token overflow
+  if (apiHistory.length > AI_CONFIG.MAX_HISTORY * 2) {
+    apiHistory = apiHistory.slice(-(AI_CONFIG.MAX_HISTORY * 2));
+  }
   
   try {
+    console.log('Sending request to DeepSeek API...');
+    
+    // Construct full messages array with system prompt and history
+    const messages = [
+      { role: 'system', content: AI_CONFIG.SYSTEM_PROMPT },
+      ...apiHistory
+    ];
+    
     const response = await fetch(AI_CONFIG.API_ENDPOINT, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
         'Authorization': `Bearer ${AI_CONFIG.API_KEY}`,
-        'HTTP-Referer': window.location.origin,
-        'X-Title': 'Kina Resort AI Chat'
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         model: AI_CONFIG.MODEL,
@@ -250,27 +245,26 @@ async function getAIResponse(userMessage) {
     
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('API Error Response:', errorText);
-      throw new Error(`API Error: ${response.status} - ${errorText}`);
+      throw new Error(`API error: ${response.status} - ${errorText}`);
     }
     
     const data = await response.json();
     console.log('API response data:', data);
     
-    const aiResponse = data.choices[0].message.content;
+    const aiResponse = data.choices?.[0]?.message?.content?.trim() || 'No response received.';
     
-    // Add AI response to chat history
-    chatHistory.push({
-      role: 'assistant',
-      content: aiResponse
-    });
+    // Add assistant response to API history
+    apiHistory.push({ role: 'assistant', content: aiResponse });
     
     return aiResponse;
     
   } catch (error) {
     console.error('AI API Error:', error);
-    // Fallback to mock response on API error
-    return getMockResponse(userMessage);
+    
+    // Remove failed user message from history
+    apiHistory.pop();
+    
+    return `Sorry, there was an error processing your request: ${error.message}. Please try again.`;
   }
 }
 
@@ -323,11 +317,52 @@ function initializeAIChat() {
   // CSS is now handled in the main stylesheet
 }
 
+// Test API connection function
+async function testAPIConnection() {
+  if (!isAPIConfigured()) {
+    console.log('API not configured, skipping test');
+    return;
+  }
+  
+  try {
+    console.log('Testing API connection...');
+    const response = await fetch(AI_CONFIG.API_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${AI_CONFIG.API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: AI_CONFIG.MODEL,
+        messages: [
+          { role: 'system', content: AI_CONFIG.SYSTEM_PROMPT },
+          { role: 'user', content: 'Hello, this is a test.' }
+        ]
+      })
+    });
+    
+    console.log('Test response status:', response.status);
+    
+    if (response.ok) {
+      const data = await response.json();
+      console.log('✅ API connection successful!', data);
+    } else {
+      const errorText = await response.text();
+      console.log('❌ API connection failed:', response.status, errorText);
+    }
+  } catch (error) {
+    console.log('❌ API connection error:', error.message);
+  }
+}
+
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', initializeAIChat);
 
 // Also try to initialize after a short delay in case DOMContentLoaded already fired
 setTimeout(initializeAIChat, 100);
+
+// Test API connection after a delay
+setTimeout(testAPIConnection, 500);
 
 // Minimize AI chat
 function minimizeAIChat() {

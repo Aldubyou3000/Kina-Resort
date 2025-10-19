@@ -3,18 +3,13 @@ export async function AboutPage() {
     <section class="container">
       <div class="about-hero">
         <h1>About Kina Resort</h1>
-        <p class="about-subtitle">Your Tropical Paradise in the Heart of the Island Province</p>
       </div>
-    </section>
 
-    <section class="container">
       <div class="about-content">
         <h2>Our Story</h2>
         <p>Nestled along the pristine shores of the Island Province, Kina Resort has been welcoming guests to experience the perfect blend of tropical serenity and modern comfort since our founding. We believe that every guest deserves an authentic island experience that rejuvenates the soul while providing all the conveniences of contemporary living.</p>
       </div>
-    </section>
 
-    <section class="container">
       <div class="about-content">
         <h2>What you can expect at Kina Resort</h2>
         
@@ -37,23 +32,17 @@ export async function AboutPage() {
           </div>
         </div>
       </div>
-    </section>
 
-    <section class="container">
       <div class="about-content">
         <h2>Guest Experience</h2>
         <p>We believe that exceptional hospitality is about creating moments that matter. From the moment you arrive, our dedicated team is committed to ensuring your stay exceeds expectations.</p>
       </div>
-    </section>
 
-    <section class="container">
       <div class="about-content">
         <h2>Our Commitment to Sustainability</h2>
         <p>Kina Resort is committed to preserving the natural beauty of our island home. We implement eco-friendly practices throughout our operations and work closely with local communities to ensure sustainable tourism.</p>
       </div>
-    </section>
 
-    <section class="container">
       <div class="about-content">
         <h2>Plan Your Visit</h2>
         <p>Ready to experience the magic of Kina Resort? We're here to help you plan the perfect tropical getaway.</p>
@@ -68,8 +57,8 @@ export async function AboutPage() {
     <style>
       .about-hero {
         text-align: center;
-        padding: 30px 20px;
-        margin-bottom: 20px;
+        padding: 0 20px 5px 20px;
+        margin-bottom: 0;
       }
 
       .about-hero h1 {
@@ -89,7 +78,7 @@ export async function AboutPage() {
       .about-content {
         max-width: 800px;
         margin: 0 auto;
-        padding: 20px;
+        padding: 0 20px 30px 20px;
         text-align: left;
       }
 
@@ -98,16 +87,18 @@ export async function AboutPage() {
         margin: 0 0 15px;
         color: var(--color-text);
         position: relative;
-        display: inline-block;
-        text-align: left;
+        display: block;
+        text-align: center;
+        width: 100%;
       }
 
       .about-content h2::after {
         content: '';
         position: absolute;
         bottom: -8px;
-        left: 0;
-        width: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
         height: 3px;
         background: #ffd700;
         border-radius: 2px;
@@ -128,11 +119,19 @@ export async function AboutPage() {
       }
 
       .feature-item {
-        background: var(--color-surface);
-        padding: 15px;
-        border-radius: 8px;
-        border: 1px solid var(--border);
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        border: 2px solid #e2e8f0;
         text-align: left;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+      }
+
+      .feature-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        border-color: var(--color-accent);
       }
 
       .feature-item h3 {
@@ -151,7 +150,7 @@ export async function AboutPage() {
       .cta-buttons {
         display: flex;
         gap: 12px;
-        justify-content: flex-start;
+        justify-content: center;
         margin: 20px 0;
         flex-wrap: wrap;
       }
@@ -162,11 +161,11 @@ export async function AboutPage() {
 
       @media (max-width: 768px) {
         .about-hero {
-          padding: 25px 15px;
+          padding: 0 15px 5px 15px;
         }
 
         .about-content {
-          padding: 15px;
+          padding: 0 15px 25px 15px;
         }
 
         .about-features {
@@ -176,7 +175,7 @@ export async function AboutPage() {
 
         .cta-buttons {
           flex-direction: column;
-          align-items: flex-start;
+          align-items: center;
         }
 
         .cta-buttons .btn {
