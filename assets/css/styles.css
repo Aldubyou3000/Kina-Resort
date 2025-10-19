@@ -231,7 +231,7 @@ html {
 /* Hero */
 .hero {
   position: relative;
-  min-height: 100vh;
+  height: calc(100vh - 100px);
   border-radius: 0;
   overflow: hidden;
   box-shadow: none;
@@ -966,10 +966,8 @@ label {
   left: 0;
   right: 0;
   bottom: -2px;
-  height: 3px;
-  background: linear-gradient(90deg, #ffd700 0%, #ffed4e 50%, #ffd700 100%);
-  border-radius: 2px;
-  box-shadow: 0 2px 4px rgba(255, 215, 0, 0.3);
+  height: 1px;
+  background: currentColor;
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 0.25s ease;
@@ -1631,7 +1629,7 @@ label {
 
   /* Hero responsive */
   .hero {
-    min-height: 100vh;
+    height: calc(100vh - 80px);
   }
 
   .hero-content {
@@ -1883,10 +1881,8 @@ h6 {
   left: 0;
   bottom: -2px;
   width: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #ffd700 0%, #ffed4e 50%, #ffd700 100%);
-  border-radius: 2px;
-  box-shadow: 0 2px 4px rgba(255, 215, 0, 0.3);
+  height: 1px;
+  background: currentColor;
   transition: width 0.3s ease;
 }
 
