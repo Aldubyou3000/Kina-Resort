@@ -37,12 +37,8 @@ export async function RoomsPage(){
   };
 
   const search = `
-    <div class=\"search-hero\" style=\"background: linear-gradient(135deg, var(--color-accent) 0%, #2c5aa0 100%); padding: 40px 0; margin: -20px -20px 40px -20px; border-radius: 0 0 20px 20px;\">
+    <div class=\"search-section\" style=\"padding: 40px 0; margin: -20px -20px 40px -20px; border-radius: 0 0 20px 20px;\">
       <div class=\"container\" style=\"max-width: 800px;\">
-        <div class=\"section-head\" style=\"text-align: center; margin-bottom: 30px;\">
-          <h2 style=\"color: white; font-size: 36px; margin: 0;\">Find Your Perfect Stay</h2>
-          <p style=\"color: rgba(255,255,255,0.9); margin: 8px 0 0; font-size: 18px;\">Discover our luxurious accommodations</p>
-        </div>
         <form class=\"form\" onsubmit=\"kinaSearchRooms(event)\" style=\"background: white; border-radius: 16px; padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.1);\">
           <div class=\"form-row\">
             <div><label>Check-in</label><input class=\"input\" type=\"date\" name=\"checkin\" required></div>
@@ -62,11 +58,11 @@ export async function RoomsPage(){
       <div style=\"padding: 20px;\">
         <h3 style=\"margin: 0 0 12px; font-size: 24px; color: var(--color-text); position: relative;\">${r.title}</h3>
         <div style=\"color: var(--color-muted); margin-bottom: 16px; line-height: 1.5;\">${r.amenities.join(' • ')}</div>
-        <div style=\"display: flex; align-items: center; justify-content: space-between; margin-top: 16px;\">
+        <div style=\"display: flex; flex-direction: column; gap: 16px; margin-top: 16px;\">
           <div style=\"display: flex; gap: 8px; flex-wrap: wrap;\">
             ${r.amenities.map(amenity => `<span style=\"background: var(--color-bg); color: var(--color-text); padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: 500;\">${amenity}</span>`).join('')}
           </div>
-          <button class=\"btn primary\" onclick=\"kinaBookRoom('${r.id}')\" style=\"font-weight: 600;\">Book Now</button>
+          <button class=\"btn primary room-book-btn\" onclick=\"kinaBookRoom('${r.id}')\">Book Now</button>
         </div>
       </div>
     </article>`).join('');
@@ -86,22 +82,43 @@ export async function RoomsPage(){
           transform: translateY(-8px);
           box-shadow: 0 20px 40px rgba(0,0,0,0.15);
         }
-        .search-hero {
+        .room-book-btn {
+          font-weight: 600;
+          padding: 12px 24px;
+          border-radius: 8px;
+          border: none;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          width: 100%;
+          height: 44px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 14px;
+          text-align: center;
+        }
+        .room-card .btn.primary:hover {
+          background-color: #ffed4e;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        .search-section {
           position: relative;
           overflow: hidden;
+          background: linear-gradient(135deg, var(--color-accent) 0%, #2c5aa0 100%);
         }
-        .search-hero::before {
+        .search-section::before {
           content: '';
           position: absolute;
           top: 0;
           left: 0;
           right: 0;
           bottom: 0;
-          background: url('images/kina1.jpg') center/cover;
+          background: url('assets/images/kina1.jpg') center/cover;
           opacity: 0.1;
           z-index: 0;
         }
-        .search-hero .container {
+        .search-section .container {
           position: relative;
           z-index: 1;
         }
