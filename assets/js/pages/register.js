@@ -48,9 +48,9 @@ export async function RegisterPage(){
     if (result.success) {
       showToast('Registration successful! Welcome to Kina Resort, ' + result.user.firstName + '!', 'success');
       window.kinaCloseModal();
-      // Redirect to dashboard
+      // Redirect to bookings
       setTimeout(() => {
-        location.hash = '#/dashboard';
+        location.hash = '#/bookings';
       }, 1000);
     } else {
       showToast(result.message, 'error');

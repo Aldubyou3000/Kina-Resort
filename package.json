@@ -1,0 +1,26 @@
+{
+  "name": "kina-resort-oct",
+  "version": "1.0.0",
+  "description": "KINA RESORT WEBSITE WITH ONLINE RESERVATION SYSTEM PROJECT",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "python3 server.py",
+    "serve": "python3 server.py"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Aldubyou3000/Kina-Resort.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/Aldubyou3000/Kina-Resort/issues"
+  },
+  "homepage": "https://github.com/Aldubyou3000/Kina-Resort#readme",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.81.1"
+  }
+}

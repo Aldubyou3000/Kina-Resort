@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin Dashboard – Kina Resort</title>
+    <meta
+      name="description"
+      content="Kina Resort Admin Dashboard: Manage bookings, facilities, and view audit logs."
+    />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="assets/css/admin.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div class="admin-layout">
+      <!-- Sidebar Navigation -->
+      <aside class="admin-sidebar" aria-label="Admin navigation">
+        <div class="sidebar-header">
+          <img
+            src="../images/kina-logo1.png"
+            alt="Kina Resort logo"
+            class="sidebar-logo"
+          />
+          <h1 class="sidebar-title">Admin Dashboard</h1>
+        </div>
+        <nav class="sidebar-nav" role="navigation">
+          <ul class="nav-list">
+            <li>
+              <a href="#overview" class="nav-link active" data-page="overview">
+                <span class="nav-icon">📊</span>
+                <span>Overview</span>
+              </a>
+            </li>
+            <li>
+              <a href="#bookings" class="nav-link" data-page="bookings">
+                <span class="nav-icon">📅</span>
+                <span>Bookings</span>
+              </a>
+            </li>
+            <li>
+              <a href="#facilities" class="nav-link" data-page="facilities">
+                <span class="nav-icon">🏨</span>
+                <span>Facilities</span>
+              </a>
+            </li>
+            <li>
+              <a href="#calendar" class="nav-link" data-page="calendar">
+                <span class="nav-icon">📆</span>
+                <span>Calendar</span>
+              </a>
+            </li>
+            <li>
+              <a href="#audit-logs" class="nav-link" data-page="audit-logs">
+                <span class="nav-icon">📋</span>
+                <span>Audit Logs</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+        <div class="sidebar-footer">
+          <a href="../index.html" class="back-link">← Back to Website</a>
+        </div>
+      </aside>
+
+      <!-- Main Content Area -->
+      <main class="admin-main" id="admin-main">
+        <header class="admin-header">
+          <h2 class="page-title">Overview</h2>
+          <div class="header-actions">
+            <span class="user-info">Admin User</span>
+          </div>
+        </header>
+
+        <div class="admin-content" id="admin-content">
+          <!-- Content will be loaded here by JavaScript -->
+          <div class="loading-placeholder">Loading...</div>
+        </div>
+      </main>
+    </div>
+
+    <script type="module" src="assets/js/admin.js"></script>
+  </body>
+</html>
+

@@ -20,14 +20,14 @@ export const AI_CONFIG = {
   
   // System prompt for the AI assistant
   SYSTEM_PROMPT: `You are Kina Resort's AI assistant. You help guests with:
-  - Resort information and amenities (infinity pool, beachfront cottages, luxury rooms)
-  - Booking assistance and room recommendations
+  - Resort information and amenities
+  - Booking assistance and service recommendations
   - Local attractions and activities
   - Weather and travel tips
   - General resort inquiries
   
   Be friendly, helpful, and professional. Keep responses concise and relevant to resort services. 
-  If asked about pricing, mention: Luxury rooms start at ₱6,500/night, beachfront cottages at ₱7,500/night, and day passes are ₱1,200.`,
+  If asked about pricing, mention: Standard Room - ₱2,000/Day (4 available), Open Cottage - ₱300 (4 available), Standard Cottage - ₱400 (4 available), Family Cottage - ₱500 (4 available), Grand Function Hall - ₱15,000 (1 available), Intimate Function Hall - ₱10,000 (1 available).`,
   
   // API Request Settings
   MAX_TOKENS: 500,
@@ -43,10 +43,11 @@ export const AI_CONFIG = {
 
 export const MOCK_RESPONSES = {
   'hello': 'Hello! Welcome to Kina Resort. How can I help you today?',
-  'booking': 'I can help you with booking a room. We have luxury rooms, beachfront cottages, and infinity pool access. What type of accommodation are you interested in?',
-  'weather': 'The weather at Kina Resort is typically tropical and sunny. You can check our weather page for current conditions and forecasts.',
-  'amenities': 'Kina Resort offers beachfront access, infinity pool, beachfront cottages, tropical gardens, water sports, and gourmet dining. What would you like to know more about?',
-  'pricing': 'Our pricing varies by accommodation type. Luxury rooms start at ₱6,500/night, beachfront cottages at ₱7,500/night, and day passes are ₱1,200. Would you like to book?',
+  'booking': 'I can help you with booking. We have Standard Rooms (₱2,000/Day), Open Cottages (₱300), Standard Cottages (₱400), Family Cottages (₱500), Grand Function Hall (₱15,000), and Intimate Function Hall (₱10,000). What service are you interested in?',
+  'weather': 'The weather at Kina Resort is typically tropical and sunny. You can check our calendar page for current conditions.',
+  'calendar': 'The weather at Kina Resort is typically tropical and sunny. You can check our calendar page for current conditions.',
+  'amenities': 'Kina Resort offers Standard Rooms, Open Cottages, Standard Cottages, Family Cottages, Grand Function Hall, and Intimate Function Hall. What would you like to know more about?',
+  'pricing': 'Our pricing: Standard Room - ₱2,000/Day (4 available), Open Cottage - ₱300 (4 available), Standard Cottage - ₱400 (4 available), Family Cottage - ₱500 (4 available), Grand Function Hall - ₱15,000 (1 available), Intimate Function Hall - ₱10,000 (1 available). Would you like to book?',
   'contact': 'You can reach us through our website or visit our resort directly. We\'re located in the Island Province and are here to help with all your needs.',
   'default': 'I\'m here to help with your Kina Resort inquiries. You can ask me about bookings, amenities, weather, or anything else related to your stay.'
 };

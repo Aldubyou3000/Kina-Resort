@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supabase Connection Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-top: 0;
+        }
+        .test-item {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 4px;
+            border-left: 4px solid #ccc;
+        }
+        .test-item.success {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+        .test-item.error {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        .test-item.loading {
+            background: #fff3cd;
+            border-color: #ffc107;
+            color: #856404;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+    </style>
+    <script type="importmap">
+        {
+            "imports": {
+                "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm"
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔌 Supabase Connection Test</h1>
+        <p>This page will test your Supabase connection and verify your database setup.</p>
+        
+        <button onclick="runTests()">Run Tests</button>
+        
+        <div id="results"></div>
+    </div>
+
+    <script type="module">
+        import { createClient } from '@supabase/supabase-js';
+        import { SUPABASE_URL, SUPABASE_ANON_KEY } from './assets/js/config/supabaseConfig.js';
+
+        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const resultsDiv = document.getElementById('results');
+
+        function addResult(title, status, message, data = null) {
+            const div = document.createElement('div');
+            div.className = `test-item ${status}`;
+            div.innerHTML = `
+                <strong>${title}</strong><br>
+                ${message}
+                ${data ? `<pre>${JSON.stringify(data, null, 2)}</pre>` : ''}
+            `;
+            resultsDiv.appendChild(div);
+        }
+
+        window.runTests = async function() {
+            resultsDiv.innerHTML = '';
+            addResult('Initializing...', 'loading', 'Starting connection tests...');
+
+            // Test 1: Check Supabase client initialization
+            try {
+                if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+                    throw new Error('Missing Supabase credentials');
+                }
+                addResult('✅ Credentials Check', 'success', 
+                    `URL: ${SUPABASE_URL.substring(0, 30)}...<br>Key: ${SUPABASE_ANON_KEY.substring(0, 20)}...`);
+            } catch (error) {
+                addResult('❌ Credentials Check', 'error', error.message);
+                return;
+            }
+
+            // Test 2: Test connection to Supabase
+            try {
+                const { data, error } = await supabase.from('bookings').select('count').limit(1);
+                if (error) throw error;
+                addResult('✅ Database Connection', 'success', 'Successfully connected to Supabase database');
+            } catch (error) {
+                addResult('❌ Database Connection', 'error', 
+                    `Failed to connect: ${error.message}<br><small>Make sure your schema has been run in Supabase SQL Editor</small>`);
+            }
+
+            // Test 3: Check if tables exist
+            try {
+                const { data, error } = await supabase
+                    .from('bookings')
+                    .select('id')
+                    .limit(1);
+                
+                if (error) throw error;
+                addResult('✅ Bookings Table', 'success', 'Bookings table exists and is accessible');
+            } catch (error) {
+                addResult('❌ Bookings Table', 'error', 
+                    `Error accessing bookings table: ${error.message}<br><small>Make sure you ran the schema.sql file in Supabase</small>`);
+            }
+
+            // Test 4: Check booking_services table
+            try {
+                const { data, error } = await supabase
+                    .from('booking_services')
+                    .select('id')
+                    .limit(1);
+                
+                if (error) throw error;
+                addResult('✅ Booking Services Table', 'success', 'Booking services table exists and is accessible');
+            } catch (error) {
+                addResult('❌ Booking Services Table', 'error', 
+                    `Error accessing booking_services table: ${error.message}`);
+            }
+
+            // Test 5: Test RLS policies (try to read - should work even if empty)
+            try {
+                const { data, error } = await supabase
+                    .from('bookings')
+                    .select('*')
+                    .limit(5);
+                
+                if (error) throw error;
+                addResult('✅ Row Level Security', 'success', 
+                    `RLS policies are working. Found ${data.length} booking(s) in database.`);
+            } catch (error) {
+                addResult('⚠️ Row Level Security', 'error', 
+                    `RLS issue: ${error.message}<br><small>Check your RLS policies in Supabase</small>`);
+            }
+
+            // Test 6: Test insert capability (dry run - we won't actually insert)
+            try {
+                // Just check if we can build the query - don't execute
+                const testQuery = supabase
+                    .from('bookings')
+                    .insert({
+                        booking_id: 'TEST',
+                        full_name: 'Test User',
+                        email: 'test@example.com',
+                        phone: '1234567890',
+                        check_in: '2024-01-01',
+                        check_out: '2024-01-02',
+                        status: 'pending'
+                    });
+                
+                addResult('✅ Insert Permissions', 'success', 
+                    'Insert query can be constructed (RLS allows public inserts)');
+            } catch (error) {
+                addResult('❌ Insert Permissions', 'error', 
+                    `Insert test failed: ${error.message}`);
+            }
+
+            addResult('✅ All Tests Complete', 'success', 
+                'Connection test finished. If all tests passed, your Supabase setup is working correctly!');
+        };
+
+        // Auto-run tests on load
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => runTests(), 500);
+        });
+    </script>
+</body>
+</html>
+

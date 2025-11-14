@@ -5,14 +5,11 @@ import { showToast } from './components/toast.js';
 import { setBusy } from './components/loader.js';
 import { HomePage } from './pages/home.js';
 import { PackagesPage, initLuxuryPackages } from './pages/packages.js';
-import { RoomsPage } from './pages/rooms.js';
 import { AuthPage } from './pages/auth.js';
 import { RegisterPage } from './pages/register.js';
 import { ForgotPasswordPage } from './pages/forgotPassword.js';
-import { DashboardPage } from './pages/dashboard.js';
-import { BookingsPage } from './pages/bookings.js';
-import { AdminPage } from './pages/admin.js';
-import { WeatherPage } from './pages/weather.js';
+import { BookingsPage, initBookingsPage } from './pages/bookings.js';
+import { CalendarPage, initCalendarPage } from './pages/calendar.js';
 import { CheckoutPage } from './pages/checkout.js';
 import { AboutPage } from './pages/about.js';
 import { TermsPage } from './pages/terms.js';
@@ -26,35 +23,37 @@ import './components/aiChat.js'; // AI Chat functionality
 let lenisInstance = null;
 let scrollAnimations = null;
 
+// Expose cleanup function globally for logout
+window.cleanupAppResources = function() {
+  if (lenisInstance) {
+    destroySmoothScroll();
+    lenisInstance = null;
+  }
+  if (scrollAnimations) {
+    cleanupScrollAnimations(scrollAnimations);
+    scrollAnimations = null;
+  }
+};
+
 const routes = {
   '/': HomePage,
   '/packages': PackagesPage,
-  '/rooms': RoomsPage,
   '/auth': AuthPage,
   '/register': RegisterPage,
   '/forgot-password': ForgotPasswordPage,
-  '/dashboard': DashboardPage,
   '/bookings': BookingsPage,
-  '/admin': AdminPage,
-  '/weather': WeatherPage,
+  '/calendar': CalendarPage,
   '/checkout': CheckoutPage,
   '/about': AboutPage,
   '/terms': TermsPage
 };
 
-function updateAdminVisibility(){
-  const { role } = getAuthState();
-  const adminLinks = document.querySelectorAll('.admin-only');
-  adminLinks.forEach(node => {
-    node.hidden = !(role === 'admin' || role === 'staff');
-  });
-}
 
 async function router(){
   const path = location.hash.replace('#','') || '/';
   
   // Scroll to top when navigating
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  window.scrollTo({ top: 0, behavior: 'auto' });
   
   // Cleanup previous scroll animations
   if (scrollAnimations) {
@@ -111,17 +110,31 @@ async function router(){
       main.innerHTML = '';
     }
     
-    // Initialize scroll animations for homepage (excluding section-why)
-    if (path === '/' || path === '') {
-      setTimeout(() => {
-        scrollAnimations = initHomepageScrollAnimations();
-      }, 100); // Small delay to ensure DOM is ready
-    }
+    // Initialize scroll animations for homepage (excluding section-why) - DISABLED
+    // if (path === '/' || path === '') {
+    //   setTimeout(() => {
+    //     scrollAnimations = initHomepageScrollAnimations();
+    //   }, 100); // Small delay to ensure DOM is ready
+    // }
     
     // Initialize luxury packages for packages page
     if (path === '/packages') {
       setTimeout(() => {
         initLuxuryPackages();
+      }, 100); // Small delay to ensure DOM is ready
+    }
+    
+    // Initialize calendar functionality for calendar page
+    if (path === '/calendar') {
+      setTimeout(() => {
+        initCalendarPage();
+      }, 100); // Small delay to ensure DOM is ready
+    }
+    
+    // Initialize bookings page functionality
+    if (path === '/bookings') {
+      setTimeout(() => {
+        initBookingsPage();
       }, 100); // Small delay to ensure DOM is ready
     }
   }catch(err){
@@ -130,16 +143,16 @@ async function router(){
     main.innerHTML = `<section class="container"><h2>Error</h2><p>Please try again.</p></section>`;
   }finally{
     setBusy(false);
-    updateAdminVisibility();
   }
 }
 
 function onReady(){
   renderHeader();
+  window.renderHeader = renderHeader; // Expose globally for logout
   renderFooter();
   
-  // Initialize smooth scrolling
-  lenisInstance = initSmoothScroll();
+  // Initialize smooth scrolling - DISABLED for instant navigation
+  // lenisInstance = initSmoothScroll();
   
   document.querySelector('.nav-toggle')?.addEventListener('click', () => {
     const menu = document.getElementById('primary-menu');
@@ -182,11 +195,12 @@ function onReady(){
     if (e.target.tagName === 'A' && e.target.getAttribute('href')?.startsWith('#')) {
       // Small delay to allow hash change to process first
       setTimeout(() => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({ top: 0, behavior: 'auto' });
       }, 50);
     }
   });
   window.addEventListener('hashchange', router);
+  window.router = router; // Expose router globally for logout
   router();
 
   // Back to top behavior
@@ -207,7 +221,7 @@ function onReady(){
       if (lenisInstance) {
         scrollToTop();
       } else {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({ top: 0, behavior: 'auto' });
       }
     });
   }
@@ -225,15 +239,8 @@ if(document.readyState === 'loading'){
   onReady();
 }
 
-// Cleanup on page unload
-window.addEventListener('beforeunload', () => {
-  if (lenisInstance) {
-    destroySmoothScroll();
-  }
-  if (scrollAnimations) {
-    cleanupScrollAnimations(scrollAnimations);
-  }
-});
+// Note: Removed beforeunload listener to fix permissions policy violations
+// Cleanup is now handled explicitly during logout and navigation
 
 // Optimized lazy reveal for sections - reduced animation complexity
 function initSectionLazyLoad(){

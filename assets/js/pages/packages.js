@@ -1,42 +1,6 @@
 import { createLuxuryCard, createPackagesGrid, samplePackages, allPackages } from '../components/luxuryCard.js';
 
 export async function PackagesPage(){
-  const data = [
-    { id:'lux-rooms', title:'Luxury Rooms', img:'images/kina1.jpg', price:'₱6,500+/night', desc:'Spacious rooms with ocean views, modern bath, and breakfast.' },
-    { id:'infinity-pool', title:'Infinity Pool Access', img:'images/kina2.jpg', price:'Included', desc:'Sweeping horizon pool perfect for sunny afternoons.' },
-    { id:'beach-cottages', title:'Beachfront Cottages', img:'images/kina3.jpg', price:'₱7,500+/night', desc:'Private veranda, direct beach access, ideal for couples.' },
-    { id:'dining', title:'Gourmet Dining Options', img:'images/kina1.jpg', price:'Varies', desc:'Seafood-forward menus and tropical cocktails.' },
-    { id:'water-sports', title:'Water Sports', img:'images/kina2.jpg', price:'₱800+/hour', desc:'Kayaks, paddleboards, and snorkeling gear.' },
-    { id:'day-pass', title:'Day Pass', img:'images/kina3.jpg', price:'₱1,200', desc:'Pool + facilities access for day visitors.' },
-  ];
-
-  function card(p){
-    return `
-    <article class="package-card" data-id="${p.id}">
-      <div class="package-media" style="background-image:url('${p.img}')"></div>
-      <div class="package-meta">
-        <div class="package-title">${p.title}</div>
-        <div class="package-price">${p.price}</div>
-      </div>
-      <div class="package-overlay">
-        <h4>${p.title}</h4>
-        <p>${p.desc}</p>
-        <small>💡 Perfect for clear weather days</small>
-        <div class="package-cta">
-          <a class="btn primary" href="#/rooms">Book Now</a>
-          <a class="btn" href="#/rooms">Learn More</a>
-        </div>
-      </div>
-    </article>`;
-  }
-
-  window.kinaFilterPackages = (q) => {
-    const val = (q||'').toLowerCase();
-    document.querySelectorAll('.package-card').forEach(node => {
-      const id = node.getAttribute('data-id')||'';
-      node.style.display = id.includes(val) ? '' : 'none';
-    });
-  };
 
   return `
     <section class="packages-section">
@@ -70,12 +34,19 @@ export async function PackagesPage(){
           
           <div class="filter-tabs">
             <button class="filter-tab active" data-category="" onclick="setActiveFilter(this, '')">All</button>
-            <button class="filter-tab" data-category="cottages" onclick="setActiveFilter(this, 'cottages')">Cottages</button>
             <button class="filter-tab" data-category="rooms" onclick="setActiveFilter(this, 'rooms')">Rooms</button>
-            <button class="filter-tab" data-category="menu" onclick="setActiveFilter(this, 'menu')">Dining</button>
-            <button class="filter-tab" data-category="activities" onclick="setActiveFilter(this, 'activities')">Activities</button>
+            <button class="filter-tab" data-category="cottages" onclick="setActiveFilter(this, 'cottages')">Cottages</button>
+            <button class="filter-tab" data-category="functionHall" onclick="setActiveFilter(this, 'functionHall')">Function Hall</button>
           </div>
         </div>
+          </div>
+        </div>
+        
+        <!-- Rooms Section -->
+        <div class="package-section" id="rooms-section">
+          <h3 class="section-title">Rooms</h3>
+          <div class="packages-grid" id="rooms-grid">
+            <!-- Room cards will be inserted here -->
           </div>
         </div>
         
@@ -87,27 +58,11 @@ export async function PackagesPage(){
           </div>
         </div>
         
-        <!-- Rooms Section -->
-        <div class="package-section" id="rooms-section">
-          <h3 class="section-title">Rooms & Suites</h3>
-          <div class="packages-grid" id="rooms-grid">
-            <!-- Room cards will be inserted here -->
-          </div>
-        </div>
-        
-        <!-- Menu Section -->
-        <div class="package-section" id="menu-section">
-          <h3 class="section-title">Dining Packages</h3>
-          <div class="packages-grid" id="menu-grid">
-            <!-- Menu cards will be inserted here -->
-          </div>
-        </div>
-        
-        <!-- Activities Section -->
-        <div class="package-section" id="activities-section">
-          <h3 class="section-title">Activities & Tours</h3>
-          <div class="packages-grid" id="activities-grid">
-            <!-- Activity cards will be inserted here -->
+        <!-- Function Hall Section -->
+        <div class="package-section" id="functionHall-section">
+          <h3 class="section-title">Function Hall</h3>
+          <div class="packages-grid" id="functionHall-grid">
+            <!-- Function Hall cards will be inserted here -->
           </div>
         </div>
       </div>
@@ -473,10 +428,9 @@ export function initLuxuryPackages() {
   // Wait for DOM to be ready
   setTimeout(() => {
     // Initialize each section
-    initializeSection('cottages', allPackages.cottages);
     initializeSection('rooms', allPackages.rooms);
-    initializeSection('menu', allPackages.menu);
-    initializeSection('activities', allPackages.activities);
+    initializeSection('cottages', allPackages.cottages);
+    initializeSection('functionHall', allPackages.functionHall);
   }, 100);
 }
 
@@ -509,7 +463,7 @@ window.filterPackages = function() {
   }
   
   // Get all package sections
-  const sections = ['cottages', 'rooms', 'menu', 'activities'];
+  const sections = ['rooms', 'cottages', 'functionHall'];
   
   sections.forEach(sectionId => {
     const section = document.getElementById(`${sectionId}-section`);

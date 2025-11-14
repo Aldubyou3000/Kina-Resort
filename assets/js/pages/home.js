@@ -48,26 +48,18 @@ export async function HomePage(){
     }
   }, 500);
 
-  // Populate weather
+  // Populate calendar
   try{
     const w = await fetchWeatherSummary();
-    const root = frag.querySelector('[data-weather-section]');
+    const root = frag.querySelector('[data-calendar-section]');
     if(root){
       root.querySelector('[data-w-temp]').textContent = `${w.current.tempC}°C`;
       root.querySelector('[data-w-cond]').textContent = `${w.current.icon} ${w.current.condition}`;
       root.querySelector('[data-w-loc]').textContent = w.location;
       root.querySelector('[data-w-sugg]').textContent = w.suggestion;
-      const future = root.querySelector('[data-w-future]');
-      future.innerHTML = w.nextDays.map(d => `
-        <div class="chip" aria-label="${d.d} ${d.c}">
-          <div style="font-weight:600">${d.d}</div>
-          <div>${d.t}°C</div>
-          <div style="color:var(--color-muted)">${d.c}</div>
-        </div>
-      `).join('');
     }
   }catch(e){
-    showToast('Unable to load weather right now.', 'error');
+    showToast('Unable to load calendar right now.', 'error');
   }
 
   // Lazy load feature images and reveal on scroll
@@ -93,6 +85,18 @@ export async function HomePage(){
     const src = media?.getAttribute('data-src');
     if(src){ media.style.backgroundImage = `url('${src}')`; }
   });
+
+  // Add navigation to Packages "view >" button
+  const packagesTile = frag.querySelector('#section-why .tile.portrait:nth-child(2)');
+  if (packagesTile) {
+    const viewButton = packagesTile.querySelector('.p-view');
+    if (viewButton) {
+      viewButton.style.cursor = 'pointer';
+      viewButton.addEventListener('click', () => {
+        window.location.hash = '#/packages';
+      });
+    }
+  }
 
   const wrapper = document.createElement('div');
   wrapper.appendChild(frag);

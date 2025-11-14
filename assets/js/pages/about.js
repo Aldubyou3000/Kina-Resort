@@ -23,16 +23,16 @@ export async function AboutPage() {
             <p>Direct access to pristine beaches with crystal-clear waters</p>
           </div>
           <div class="feature-item">
-            <h3>🏊 Infinity Pool</h3>
-            <p>Our signature infinity pool offers panoramic ocean views</p>
+            <h3>🏠 Cottages</h3>
+            <p>Comfortable cottages perfect for day use and gatherings</p>
           </div>
           <div class="feature-item">
-            <h3>🏠 Beachfront Cottages</h3>
-            <p>Modern accommodations with direct beach access</p>
+            <h3>🛏️ Standard Rooms</h3>
+            <p>Comfortable rooms with essential amenities for your stay</p>
           </div>
           <div class="feature-item">
-            <h3>🌴 Tropical Gardens</h3>
-            <p>Lush native palms and tropical vegetation throughout</p>
+            <h3>🎉 Function Halls</h3>
+            <p>Spacious halls perfect for events and celebrations</p>
           </div>
         </div>
       </div>
@@ -58,7 +58,6 @@ export async function AboutPage() {
         <p>Ready to experience the magic of Kina Resort? We're here to help you plan the perfect tropical getaway.</p>
         
         <div class="cta-buttons">
-          <a class="btn primary" href="#/rooms">Book Your Stay</a>
           <a class="btn hollow" href="#/packages">View Packages</a>
         </div>
       </div>
@@ -76,7 +75,7 @@ export async function AboutPage() {
       .about-hero .container {
         max-width: 800px;
         margin: 0 auto;
-        margin-bottom: 40px;
+        margin-bottom: 40 px;
       }
 
       .about-hero h1 {

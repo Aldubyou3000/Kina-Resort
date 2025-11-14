@@ -62,8 +62,8 @@ export function initHomepageScrollAnimations() {
     triggerOnce: true
   });
 
-  // Weather section
-  observers.weatherSection = initScrollAnimations('#section-weather', {
+  // Calendar section
+  observers.calendarSection = initScrollAnimations('#section-calendar', {
     threshold: 0.1,
     rootMargin: '0px 0px -5% 0px',
     triggerOnce: true

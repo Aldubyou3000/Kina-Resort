@@ -3,10 +3,11 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Permissions-Policy" content="unload=(), bluetooth=()" />
     <title>Kina Resort – Online Reservations</title>
     <meta
       name="description"
-      content="Kina Resort online reservation system: browse rooms, view packages, check weather, and book your tropical stay."
+      content="Kina Resort online reservation system: browse rooms, view packages, check calendar, and book your tropical stay."
     />
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -15,6 +16,13 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="assets/css/styles.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm"
+        }
+      }
+    </script>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -38,14 +46,11 @@
         </button>
         <ul id="primary-menu" class="menu" role="menubar">
           <li role="none"><a role="menuitem" href="#/packages">Packages</a></li>
-          <li role="none"><a role="menuitem" href="#/rooms">Book Now</a></li>
-          <li role="none"><a role="menuitem" href="#/weather">Weather</a></li>
+          <li role="none" hidden><a role="menuitem" href="#/bookings">Bookings</a></li>
+          <li role="none"><a role="menuitem" href="#/calendar">Calendar</a></li>
           <li role="none"><a role="menuitem" href="#/about">About</a></li>
           <li role="none">
             <a role="menuitem" href="#/auth">Login</a>
-          </li>
-          <li role="none" class="admin-only" hidden>
-            <a role="menuitem" href="#/admin">Admin Dashboard</a>
           </li>
         </ul>
       </nav>
@@ -207,7 +212,7 @@
             <div class="eyebrow">Welcome to</div>
             <div class="h1">Kina Resort</div>
             <div style="display: flex; gap: 10px; flex-wrap: wrap">
-              <a class="btn primary" href="#/rooms">Book Now</a>
+              <a class="btn primary" href="#/packages">Book Now</a>
               <a class="btn hollow" href="#/packages">View Packages</a>
             </div>
           </div>
@@ -237,7 +242,7 @@
             ></div>
             <div class="p-body">
               <h3>Packages</h3>
-              <p>Infinity pool, cottages, water sports, and more.</p>
+              <p>Rooms, cottages, function halls, and more.</p>
             </div>
             <span class="p-view">View <span class="arrow">&gt;</span></span>
           </article>
@@ -283,14 +288,11 @@
               <div class="feature-media" aria-hidden="true"></div>
             </div>
             <div class="feature-content">
-              <h3>Pool & Cabanas</h3>
+              <h3>Function Halls</h3>
               <p>
-                Unwind by the infinity pool with shaded cabanas. Enjoy
-                refreshments and uninterrupted time for yourself or with loved
-                ones. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Saepe cum neque facere quibusdam sapiente deleniti dolores
-                aliquam. Illum adipisci veritatis magni nisi, quasi beatae eaque
-                ab soluta unde architecto nostrum.
+                Host your special events in our spacious function halls. Perfect
+                for celebrations, gatherings, and memorable occasions. Choose from
+                our Grand Function Hall or Intimate Function Hall to suit your needs.
               </p>
             </div>
           </article>
@@ -324,13 +326,15 @@
             frameborder="0"
             allowfullscreen="true"
             allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
           ></iframe>
         </div>
       </section>
 
-      <section id="section-weather" class="container" data-weather-section>
+      <section id="section-calendar" class="container" data-calendar-section>
         <div class="section-head">
-          <h2>Weather at a Glance</h2>
+          <h2>Calendar at a Glance</h2>
         </div>
         <div class="weather" role="region" aria-label="Weather summary">
           <div class="current">
@@ -341,74 +345,13 @@
               <div class="cond" data-w-sugg>--</div>
             </div>
           </div>
-          <div class="future" data-w-future>
-            <div class="chip">
-              <div style="font-size: 12px; font-weight: 600">MON</div>
-              <div style="font-size: 20px; font-weight: 700">--</div>
-              <div style="font-size: 10px">--</div>
-            </div>
-            <div class="chip">
-              <div style="font-size: 12px; font-weight: 600">TUE</div>
-              <div style="font-size: 20px; font-weight: 700">--</div>
-              <div style="font-size: 10px">--</div>
-            </div>
-            <div class="chip">
-              <div style="font-size: 12px; font-weight: 600">WED</div>
-              <div style="font-size: 20px; font-weight: 700">--</div>
-              <div style="font-size: 10px">--</div>
-            </div>
-            <div class="chip">
-              <div style="font-size: 12px; font-weight: 600">THU</div>
-              <div style="font-size: 20px; font-weight: 700">--</div>
-              <div style="font-size: 10px">--</div>
-            </div>
-            <div class="chip">
-              <div style="font-size: 12px; font-weight: 600">FRI</div>
-              <div style="font-size: 20px; font-weight: 700">--</div>
-              <div style="font-size: 10px">--</div>
-            </div>
-            <div class="chip">
-              <div style="font-size: 12px; font-weight: 600">SAT</div>
-              <div style="font-size: 20px; font-weight: 700">--</div>
-              <div style="font-size: 10px">--</div>
-            </div>
-            <div class="chip">
-              <div style="font-size: 12px; font-weight: 600">SUN</div>
-              <div style="font-size: 20px; font-weight: 700">--</div>
-              <div style="font-size: 10px">--</div>
-            </div>
-          </div>
-          <a
-            href="#/weather"
-            style="
-              color: var(--color-text);
-              text-decoration: none;
-              font-size: 14px;
-              margin-top: 0px;
-              display: inline-flex;
-              align-items: center;
-              gap: 6px;
-            "
-          >
-            See Details
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path d="M7 17L17 7M17 7H7M17 7V17" />
-            </svg>
-          </a>
         </div>
       </section>
 
       <section id="section-cta" class="container">
         <div class="section-head"><h2>Ready to plan?</h2></div>
         <div style="display: flex; gap: 10px; flex-wrap: wrap">
-          <a class="btn primary" href="#/rooms">Start Reservation</a>
+          <a class="btn primary" href="#/packages">Book Now</a>
           <a class="btn hollow" href="#/packages">Explore Packages</a>
         </div>
       </section>

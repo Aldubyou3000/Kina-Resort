@@ -3,7 +3,7 @@ import { showToast } from '../components/toast.js';
 import { AuthManager } from '../utils/auth.js';
 
 export async function AuthPage(){
-  window.kinaLogin = (e) => {
+  window.kinaLogin = async (e) => {
     e.preventDefault();
     const form = e.target.closest('form');
     const email = form.querySelector('input[name="email"]').value.trim();
@@ -14,22 +14,31 @@ export async function AuthPage(){
       return; 
     }
     
+    // Disable submit button
+    const submitButton = form.querySelector('button[type="submit"]');
+    const originalText = submitButton.textContent;
+    submitButton.disabled = true;
+    submitButton.textContent = 'Signing in...';
+    
     // Use the auth manager for login
-    const result = window.kinaAuth.login(email, password);
+    const result = await window.kinaAuth.login(email, password);
+    
+    submitButton.disabled = false;
+    submitButton.textContent = originalText;
     
     if (result.success) {
       showToast('Login successful! Welcome back, ' + result.user.firstName + '!', 'success');
       window.kinaCloseModal();
-      // Redirect to dashboard
+      // Redirect to bookings
       setTimeout(() => {
-        location.hash = '#/dashboard';
+        location.hash = '#/bookings';
       }, 1000);
     } else {
       showToast(result.message, 'error');
     }
   };
 
-  window.kinaRegister = (e) => {
+  window.kinaRegister = async (e) => {
     e.preventDefault();
     const form = e.target.closest('form');
     const firstName = form.querySelector('input[name="firstName"]').value.trim();
@@ -63,20 +72,29 @@ export async function AuthPage(){
       return; 
     }
     
+    // Disable submit button
+    const submitButton = form.querySelector('button[type="submit"]');
+    const originalText = submitButton.textContent;
+    submitButton.disabled = true;
+    submitButton.textContent = 'Creating account...';
+    
     // Use the auth manager for registration
-    const result = window.kinaAuth.register({
+    const result = await window.kinaAuth.register({
       firstName,
       lastName,
       email,
       password
     });
     
+    submitButton.disabled = false;
+    submitButton.textContent = originalText;
+    
     if (result.success) {
       showToast('Registration successful! Welcome to Kina Resort, ' + result.user.firstName + '!', 'success');
       window.kinaCloseModal();
-      // Redirect to dashboard
+      // Redirect to bookings
       setTimeout(() => {
-        location.hash = '#/dashboard';
+        location.hash = '#/bookings';
       }, 1000);
     } else {
       showToast(result.message, 'error');
